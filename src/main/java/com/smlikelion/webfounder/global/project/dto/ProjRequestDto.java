@@ -14,6 +14,11 @@ public class ProjRequestDto {
     private Integer year;
     private String teamName;
     private String teamMember;
+    private String servIntro;
+    private String gitBeUrl;
+    private String gitFeUrl;
+    private String servLaunch;
+    private String bgImg;
 
     public ProjRequestDto(Project project) {
         this.title= project.getTitle();
@@ -22,5 +27,10 @@ public class ProjRequestDto {
         this.year= project.getYear();
         this.teamName= project.getTeamName();
         this.teamMember= project.getTeamMember();
+        this.servIntro= project.getServIntro();
+        this.gitBeUrl= project.getGitBeUrl();
+        this.gitFeUrl= project.getGitFeUrl();
+        this.servLaunch= project.getServLaunch();
+        this.bgImg= project.getBgImg();
     }
 }

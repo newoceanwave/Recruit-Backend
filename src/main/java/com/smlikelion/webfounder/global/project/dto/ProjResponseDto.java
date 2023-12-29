@@ -13,6 +13,7 @@ public class ProjResponseDto {
     private String no;
     private Integer year;
     private String summary;
+    private String bgImg;
 
     public ProjResponseDto(Project project){
         this.projectId=project.getProjectId();
@@ -20,5 +21,6 @@ public class ProjResponseDto {
         this.no=project.getYear()-2012+"기";
         this.year= project.getYear();
         this.summary= project.getSummary();
+        this.bgImg=project.getBgImg();
     }
 }
