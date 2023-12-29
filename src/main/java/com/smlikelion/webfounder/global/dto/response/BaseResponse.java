@@ -1,4 +1,4 @@
-package com.smlikelion.webfounder.global.response;
+package com.smlikelion.webfounder.global.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
