@@ -1,4 +1,5 @@
 package com.smlikelion.webfounder.Recruit.Entity;
+import com.smlikelion.webfounder.admin.entity.Question;
 import lombok.Getter;
 import lombok.Setter;
 

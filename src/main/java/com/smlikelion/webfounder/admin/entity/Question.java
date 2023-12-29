@@ -1,4 +1,5 @@
-package com.smlikelion.webfounder.Recruit.Entity;
+package com.smlikelion.webfounder.admin.entity;
+import com.smlikelion.webfounder.global.entity.DateEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,16 +11,23 @@ import java.time.LocalDateTime;
 @Table(name = "question")
 @Getter
 @Setter
-public class Question {
+public class Question extends DateEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id")
     private Long questionId;
 
+    @Column(name = "year", nullable = false)
+    private Long year;
+
+    @Column(name = "number", nullable = false)
+    private Long number;
+
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "created_at", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    @Column(name = "max_length", nullable = false)
+    private Long maxLength;
+
 }
