@@ -1,4 +1,4 @@
-package com.smlikelion.webfounder.global.controller;
+package com.smlikelion.webfounder.Recruit.Controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

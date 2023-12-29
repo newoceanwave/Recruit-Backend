@@ -1,4 +1,4 @@
-package com.smlikelion.webfounder.global.entity;
+package com.smlikelion.webfounder.Recruit.Entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;

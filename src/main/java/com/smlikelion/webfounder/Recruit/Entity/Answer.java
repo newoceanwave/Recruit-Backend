@@ -1,4 +1,4 @@
-package com.smlikelion.webfounder.global.entity;
+package com.smlikelion.webfounder.Recruit.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
