@@ -8,12 +8,15 @@ public enum ErrorCode {
     //success
     SUCCESS(true, HttpStatus.OK.value(), "요청에 성공했습니다."),
 
+    //created
+    CREATED(true, HttpStatus.CREATED.value(), "요청이 생성되었습니다."),
+
     //common
     INVALID_INPUT_VALUE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "올바르지 않은 입력값입니다."),
 
     //internal
     INTERNAL_SERVER_ERROR(false,HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 내부에서 문제가 발생했습니다."),
-    NOT_FOUND(false, HttpStatus.NOT_FOUND.value(), "해당 로그인 정보는 존재하지 않습니다."),
+    NOT_FOUND(false, HttpStatus.NOT_FOUND.value(), "해당 정보는 존재하지 않습니다."),
     UNAUTHORIZED(false, HttpStatus.UNAUTHORIZED.value(), "권한이 없습니다."),
     S3_REGISTER_IMAGE_FAILURE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "s3 이미지 저장 중 문제가 발생했습니다."),
 
