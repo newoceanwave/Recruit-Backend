@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
@@ -17,7 +19,8 @@ public class RecruitController {
 
     @PostMapping("/fe")
     public ResponseEntity<ApiResponse> submitFeRecruitment(
-            @RequestBody RecruitmentRequest request,
+            @RequestParam("track") String track,
+            @RequestBody @Valid RecruitmentRequest request,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -41,14 +44,18 @@ public class RecruitController {
     @Getter
     @Setter
     public static class RecruitmentRequest {
+        @Valid
         private StudentInfo studentInfo;
+        @Valid
         private QuestionList questionList;
+        @Valid
         private List<Integer> dateList;
     }
 
     @Getter
     @Setter
     public static class StudentInfo {
+        @NotBlank(message = "이름을 입력해주세요.")
         private String name;
         private String track;
         private String phoneNumber;
