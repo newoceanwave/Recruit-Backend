@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ProjListResponseDto {
+    private Long projectId;
     private String title;
     private String summary;
     private String content;
-    private Integer year;
     private String teamName;
     private String teamMember;
     private String servIntro;
@@ -21,10 +21,10 @@ public class ProjListResponseDto {
     private String bgImg;
 
     public ProjListResponseDto(Project project){
+        this.projectId=project.getProjectId();
         this.title= project.getTitle();
         this.summary= project.getSummary();
         this.content= project.getContent();
-        this.year= project.getYear();
         this.teamName= project.getTeamName();
         this.teamMember= project.getTeamMember();
         this.servIntro= project.getServIntro();
