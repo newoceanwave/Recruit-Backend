@@ -2,16 +2,14 @@ package com.smlikelion.webfounder.manage.entity;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
 import com.smlikelion.webfounder.global.entity.DateEntity;
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "question")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

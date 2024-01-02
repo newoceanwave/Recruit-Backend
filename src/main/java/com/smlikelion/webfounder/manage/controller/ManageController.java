@@ -25,4 +25,13 @@ public class ManageController {
             @RequestBody @Valid DocsQuestRequest request) {
         return new BaseResponse<>(manageService.registerQuestion(request));
     }
+
+    @Operation(summary = "서류 질문 수정하기")
+    @PutMapping("/docs/quest/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<DocsQuestResponse> updateQuestion(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid DocsQuestRequest request) {
+        return new BaseResponse<>(manageService.updateQuestion(id, request));
+    }
 }

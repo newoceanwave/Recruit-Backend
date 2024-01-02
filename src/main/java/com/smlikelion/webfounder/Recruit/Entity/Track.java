@@ -4,6 +4,7 @@ public enum Track {
     PLANDESIGN("pm"),
     FRONTEND("fe"),
     BACKEND("be"),
+    COMMON("common"),
     ALL("all");
 
     private final String trackName;
