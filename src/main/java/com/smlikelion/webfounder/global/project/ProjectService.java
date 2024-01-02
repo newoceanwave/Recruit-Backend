@@ -46,11 +46,4 @@ public class ProjectService {
         return new ProjListResponseDto(project);
     }
 
-//    // [DELETE] 프로젝트 삭제
-//    @Transactional
-//    public Long deleteProj(Long id) {
-//        ProjectRepository.deleteById(id);
-//        return id;
-//    }
-
 }

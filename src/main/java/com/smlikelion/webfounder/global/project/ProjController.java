@@ -1,5 +1,6 @@
 package com.smlikelion.webfounder.global.project;
 
+import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.project.dto.ProjListResponseDto;
 import com.smlikelion.webfounder.global.project.dto.ProjRequestDto;
 import com.smlikelion.webfounder.global.project.dto.ProjResponseDto;
@@ -15,21 +16,21 @@ public class ProjController {
 
     // [POST] 프로젝트 작성
     @PostMapping("/api/project")
-    public ProjRequestDto createProj(@RequestBody ProjRequestDto requestDto){
+    public BaseResponse<ProjRequestDto>  createProj(@RequestBody ProjRequestDto requestDto){
         ProjRequestDto project = projectService.createProj(requestDto);
-        return project;
+        return new BaseResponse<>(project);
     }
 
     // [GET] 프로젝트 전체 조회
     @GetMapping("/api/project")
-    public List<ProjResponseDto> getAllProj(){
-        return projectService.findAllProj();
+    public BaseResponse<List<ProjResponseDto>> getAllProj(){
+        return new BaseResponse<>(projectService.findAllProj());
     }
 
     // [GET] 프로젝트 상세 조회
     @GetMapping("/api/project/{id}")
-    public ProjListResponseDto getOneProj(@PathVariable Long id){
-        return projectService.findOneProj(id);
+    public BaseResponse<ProjListResponseDto> getOneProj(@PathVariable Long id){
+        return new BaseResponse<>(projectService.findOneProj(id));
     }
 }
 
