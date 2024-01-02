@@ -36,13 +36,13 @@ public class ManageController {
         return new BaseResponse<>(manageService.retrieveQuestionByYearAndTrack(year, track));
     }
 
-//    @Operation(summary = "서류 질문 삭제하기")
-//    @DeleteMapping("/docs/quest/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public BaseResponse<DocsQuestResponse> deleteQuestion(
-//            @PathVariable("id") Long id) {
-//        return new BaseResponse<>(manageService.deleteQuestion(id));
-//    }
+    @Operation(summary = "서류 질문 삭제하기")
+    @DeleteMapping("/docs/quest/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<DocsQuestResponse> deleteQuestion(
+            @PathVariable("id") Long id) {
+        return new BaseResponse<>(manageService.deleteQuestion(id));
+    }
 
     @Operation(summary = "서류 질문 수정하기")
     @PutMapping("/docs/quest/{id}")

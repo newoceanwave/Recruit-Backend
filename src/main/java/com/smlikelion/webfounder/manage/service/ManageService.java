@@ -60,6 +60,17 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
+    public DocsQuestResponse deleteQuestion(Long id) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
+
+        validateCurrentYear(question.getYear());
+
+        questionRepository.delete(question);
+
+        return mapQuestionToDocsQuestResponse(question);
+    }
+
     public List<DocsQuestResponse> retrieveQuestionByYearAndTrack(Long year, String track) {
         Track requestedTrack = validateTrackName(track);
 

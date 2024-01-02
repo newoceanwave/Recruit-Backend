@@ -34,4 +34,19 @@ public class ManageExceptionHandler {
         return new BaseResponse<>(ErrorCode.ALREADY_EXISTS_QUESTION_NUMBER_ERROR);
     }
 
+    @ExceptionHandler(NotFoundQuestionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse<?> handleNotFoundQuestionException(NotFoundQuestionException e, HttpServletRequest request) {
+        log.warn("MANAGE-004> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.NOT_FOUND_QUESTION_ERROR);
+    }
+
+    @ExceptionHandler(MismatchedTrackException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse<?> handleMismatchedTrackException(MismatchedTrackException e, HttpServletRequest request) {
+        log.warn("MANAGE-005> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.MISMATCHED_TRACK_ERROR);
+    }
+
+
 }
