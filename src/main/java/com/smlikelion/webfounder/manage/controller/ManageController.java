@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/manage")
@@ -25,6 +26,23 @@ public class ManageController {
             @RequestBody @Valid DocsQuestRequest request) {
         return new BaseResponse<>(manageService.registerQuestion(request));
     }
+
+    @Operation(summary = "서류 문항 조회하기")
+    @GetMapping("/docs/quest")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<List<DocsQuestResponse>> retrieveQuestionByYearAndTrack(
+            @RequestParam("year") Long year,
+            @RequestParam("track") String track) {
+        return new BaseResponse<>(manageService.retrieveQuestionByYearAndTrack(year, track));
+    }
+
+//    @Operation(summary = "서류 질문 삭제하기")
+//    @DeleteMapping("/docs/quest/{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public BaseResponse<DocsQuestResponse> deleteQuestion(
+//            @PathVariable("id") Long id) {
+//        return new BaseResponse<>(manageService.deleteQuestion(id));
+//    }
 
     @Operation(summary = "서류 질문 수정하기")
     @PutMapping("/docs/quest/{id}")

@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,12 +23,10 @@ public class ManageService {
     private final QuestionRepository questionRepository;
 
     public DocsQuestResponse registerQuestion(DocsQuestRequest request) {
-
         validateCurrentYear(request.getYear());
-        Track track = validateTrack(request.getTrack());
-        validateQuestionNumber(request.getYear(), track, request.getNumber());
+        Track track = validateTrackName(request.getTrack());
+        validateQuestionNumber(request, track, null);
 
-        //문항 등록
         Question question = questionRepository.save(
                 Question.builder()
                         .year(request.getYear())
@@ -37,25 +37,17 @@ public class ManageService {
                         .build()
         );
 
-        return DocsQuestResponse.builder()
-                .id(question.getQuestionId())
-                .year(question.getYear())
-                .track(question.getTrack().getTrackName())
-                .number(question.getNumber())
-                .content(question.getContent())
-                .maxLength(question.getMaxLength())
-                .build();
+        return mapQuestionToDocsQuestResponse(question);
     }
 
     public DocsQuestResponse updateQuestion(Long id, DocsQuestRequest request) {
-
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
 
         validateCurrentYear(request.getYear());
-        Track track = validateTrack(request.getTrack());
+        Track track = validateTrackName(request.getTrack());
         validateCurrentTrack(question.getTrack(), track);
-        validateQuestionNumber(request.getYear(), track, request.getNumber());
+        validateQuestionNumber(request, track, question);
 
         //문항 수정
         question.setTrack(track);
@@ -65,6 +57,21 @@ public class ManageService {
 
         question = questionRepository.save(question);
 
+        return mapQuestionToDocsQuestResponse(question);
+    }
+
+    public List<DocsQuestResponse> retrieveQuestionByYearAndTrack(Long year, String track) {
+        Track requestedTrack = validateTrackName(track);
+
+        List<Question> questionList = questionRepository.findAllByYearAndTrack(year, requestedTrack);
+        validateQuestionList(questionList);
+
+        return questionList.stream()
+                .map(this::mapQuestionToDocsQuestResponse)
+                .collect(Collectors.toList());
+    }
+
+    private DocsQuestResponse mapQuestionToDocsQuestResponse(Question question) {
         return DocsQuestResponse.builder()
                 .id(question.getQuestionId())
                 .year(question.getYear())
@@ -81,7 +88,7 @@ public class ManageService {
         }
     }
 
-    private Track validateTrack(String requestedTrack) {
+    private Track validateTrackName(String requestedTrack) {
         Track track = Optional.ofNullable(Track.getTrackByName(requestedTrack))
                 .orElseThrow(() -> new UnsupportedTrackException("해당 트랙이 지원되지 않습니다."));
         return track;
@@ -93,10 +100,16 @@ public class ManageService {
         }
     }
 
-    private void validateQuestionNumber(Long requestedYear, Track requestedTrack, Long requestedNumber) {
-        Question existingQuestion = questionRepository.findByYearAndTrackAndNumber(requestedYear, requestedTrack, requestedNumber);
-        if (existingQuestion != null) {
+    private void validateQuestionNumber(DocsQuestRequest request, Track track, Question existingQuestion) {
+        Question foundQuestion = questionRepository.findByYearAndTrackAndNumber(request.getYear(), track, request.getNumber());
+        if (existingQuestion != foundQuestion) {
             throw new AlreadyExistsQuestionNumberException("이미 해당 년도 해당 트랙의 번호 문항이 존재합니다.");
+        }
+    }
+
+    private void validateQuestionList(List<Question> questionList) {
+        if (questionList.isEmpty()) {
+            throw new NotFoundQuestionException("해당 년도 해당 트랙의 문항이 존재하지 않습니다.");
         }
     }
 

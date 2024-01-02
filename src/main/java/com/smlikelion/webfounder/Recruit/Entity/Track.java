@@ -18,7 +18,7 @@ public enum Track {
     }
 
     // 트랙명이 유효하면 트랙 형태로 반환
-    // 유요하지 않으면 null로 반환
+    // 유효하지 않으면 null로 반환
     public static Track getTrackByName(String trackName) {
         for (Track track : Track.values()) {
             if (track.trackName.equalsIgnoreCase(trackName)) {
