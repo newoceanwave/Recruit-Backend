@@ -1,12 +1,11 @@
 package com.smlikelion.webfounder.Recruit.Entity;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.smlikelion.webfounder.Recruit.Dto.Response.AnswerListResponse;
 import com.smlikelion.webfounder.Recruit.Dto.Response.StudentInfoResponse;
+import com.smlikelion.webfounder.global.entity.DateEntity;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.*;
 import org.hibernate.annotations.Type;
-
 import org.hibernate.annotations.TypeDef;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -25,7 +24,7 @@ import java.util.Map;
 @Getter
 @Setter
 @TypeDef(name = "json", typeClass = JsonStringType.class)
-public class Joiner {
+public class Joiner extends DateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "joiners_id")
@@ -86,15 +85,8 @@ public class Joiner {
     @Column(name = "answer_list", columnDefinition = "json")
     private List<String> answerList = new ArrayList<>();
 
-    @Column(name = "created_at", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-
     @Column(name = "graduated_year", nullable = false)
     private String graduatedYear;
-
 
 
     public StudentInfoResponse toStudentInfoResponse() {
