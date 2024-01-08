@@ -1,5 +1,6 @@
 package com.smlikelion.webfounder.Recruit.Entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.smlikelion.webfounder.global.entity.DateEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "candidate")
 @Getter
 @Setter
-public class Candidate {
+public class Candidate extends DateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "candidate_id")
@@ -28,10 +29,5 @@ public class Candidate {
     @Column(name = "interview", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private Interview interview;
-
-    @Column(name = "updated_at", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedAt;
 
 }

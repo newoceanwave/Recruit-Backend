@@ -1,4 +1,5 @@
 package com.smlikelion.webfounder.Recruit.Entity;
+import com.smlikelion.webfounder.global.entity.DateEntity;
 import com.smlikelion.webfounder.manage.entity.Question;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "answer")
 @Getter
 @Setter
-public class Answer {
+public class Answer extends DateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id")
@@ -27,11 +28,5 @@ public class Answer {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "created_at", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedAt;
 }
