@@ -6,7 +6,6 @@ import com.smlikelion.webfounder.global.project.dto.ProjListResponseDto;
 import com.smlikelion.webfounder.global.project.dto.ProjRequestDto;
 import com.smlikelion.webfounder.global.project.dto.ProjResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,6 +34,18 @@ public class ProjController {
     @GetMapping("/{id}")
     public BaseResponse<ProjListResponseDto> getOneProj(@PathVariable Long id){
         return new BaseResponse<>(projectService.findOneProj(id));
+    }
+
+    // [DELETE] 프로젝트 삭제
+    @DeleteMapping("/{id}")
+    public BaseResponse<Long> delProj(@PathVariable Long id){
+        return new BaseResponse<>(projectService.delProj(id));
+    }
+
+    // [PUT] 프로젝트 수정
+    @PutMapping("/{id}")
+    public BaseResponse<ProjListResponseDto> updateProj(@PathVariable Long id, @RequestBody @Valid ProjRequestDto requestDto){
+        return new BaseResponse<>(projectService.updateProj(id, requestDto));
     }
 }
 

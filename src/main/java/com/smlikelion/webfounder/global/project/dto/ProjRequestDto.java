@@ -22,10 +22,14 @@ public class ProjRequestDto {
     private String teamName;
     @NotNull(message = "팀원 이름을 입력해야 합니다.")
     private String teamMember;
+    @NotNull(message = "서비스 소개를 입력해야 합니다.")
     private String servIntro; //nullable
+    @NotNull(message = "깃허브 (백엔드) 주소를 입력해야 합니다.")
     private String gitBeUrl; //nullable
     private String gitFeUrl; //nullable
+    @NotNull(message = "배포 링크를 입력해야 합니다.")
     private String servLaunch; //nullable
+    @NotNull(message = "배경 이미지 S3 링크를 입력해야 합니다.")
     private String bgImg; //nullable
 
     public ProjRequestDto(Project project) {

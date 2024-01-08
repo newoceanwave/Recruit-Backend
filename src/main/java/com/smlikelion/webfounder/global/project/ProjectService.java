@@ -9,6 +9,7 @@ import com.smlikelion.webfounder.global.project.repo.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,4 +53,39 @@ public class ProjectService {
         return new ProjListResponseDto(project);
     }
 
+    // [DELETE] 프로젝트 삭제
+    public Long delProj(Long id){
+        try{
+            projectRepository.deleteById(id);
+            return id;
+        }catch (Exception e){
+            throw new ProjNotfoundException("프로젝트 삭제 실패");
+        }
+    }
+
+    // [update] 프로젝트 수정
+    @Transactional
+    public ProjListResponseDto updateProj(Long id, ProjRequestDto requestDto) {
+        Project project = projectRepository.findById(id).orElseThrow(
+                ()-> new ProjNotfoundException("프로젝트 수정 실패")
+        );
+
+        try{
+            project.setTitle(requestDto.getTitle());
+            project.setSummary(requestDto.getSummary());
+            project.setContent(requestDto.getContent());
+            project.setYear(requestDto.getYear());
+            project.setTeamName(requestDto.getTeamName());
+            project.setTeamMember(requestDto.getTeamMember());
+            project.setServIntro(requestDto.getServIntro());
+            project.setGitBeUrl(requestDto.getGitBeUrl());
+            project.setGitFeUrl(requestDto.getGitFeUrl());
+            project.setServLaunch(requestDto.getServLaunch());
+            project.setBgImg(requestDto.getBgImg());
+            return new ProjListResponseDto(project);
+        }catch (Exception e){
+            throw new ProjNotfoundException("프로젝트 수정 실패");
+        }
+
+    }
 }
