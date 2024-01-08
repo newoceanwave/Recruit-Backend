@@ -22,11 +22,11 @@ public class Candidate {
     private Joiner joiner;
 
     @Column(name = "docs", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Docs docs;
 
     @Column(name = "interview", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Interview interview;
 
     @Column(name = "updated_at", nullable = false)
