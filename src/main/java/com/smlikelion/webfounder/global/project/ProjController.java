@@ -20,7 +20,7 @@ public class ProjController {
 
     // [POST] 프로젝트 작성
     @PostMapping()
-    public BaseResponse<ProjRequestDto>  createProj(@RequestBody ProjRequestDto requestDto){
+    public BaseResponse<ProjRequestDto>  createProj(@RequestBody @Valid ProjRequestDto requestDto){
         ProjRequestDto project = projectService.createProj(requestDto);
         return new BaseResponse<>(ErrorCode.CREATED,project);
     }
