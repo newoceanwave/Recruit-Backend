@@ -39,7 +39,6 @@ public class Project extends DateEntity {
     private String teamMember;
 
     @Column(name = "service_intro")
-    @ColumnDefault("Null")
     private String servIntro; // pdf download -> S3
 
     @Column(name = "github_FE_url")
@@ -47,15 +46,12 @@ public class Project extends DateEntity {
     private String gitFeUrl;
 
     @Column(name = "github_BE_url")
-    @ColumnDefault("Null")
     private String gitBeUrl;
 
     @Column(name = "service_launch")
-    @ColumnDefault("Null")
     private String servLaunch; // 서비스 배포 주소
 
     @Column(name = "bg_img")
-    @ColumnDefault("Null")
     private String bgImg; // 배경 사진 -> S3
 
     //requestDto 정보를 가져와서 entity 만들 때 사용
