@@ -1,4 +1,4 @@
-package com.smlikelion.webfounder.global.project.exception;
+package com.smlikelion.webfounder.project.exception;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import org.springframework.http.HttpStatus;

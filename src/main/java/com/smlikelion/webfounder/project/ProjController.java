@@ -1,10 +1,10 @@
-package com.smlikelion.webfounder.global.project;
+package com.smlikelion.webfounder.project;
 
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
-import com.smlikelion.webfounder.global.project.dto.ProjListResponseDto;
-import com.smlikelion.webfounder.global.project.dto.ProjRequestDto;
-import com.smlikelion.webfounder.global.project.dto.ProjResponseDto;
+import com.smlikelion.webfounder.project.dto.ProjListResponseDto;
+import com.smlikelion.webfounder.project.dto.ProjRequestDto;
+import com.smlikelion.webfounder.project.dto.ProjResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

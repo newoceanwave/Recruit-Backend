@@ -1,8 +1,8 @@
 // 프로젝트 게시물 작성할 때 프론트한테 요청받을 값 명시
 // 프로젝트 게시물 작성 시 응답 데이터 DTO로 재활용 함
-package com.smlikelion.webfounder.global.project.dto;
+package com.smlikelion.webfounder.project.dto;
 
-import com.smlikelion.webfounder.global.project.entity.Project;
+import com.smlikelion.webfounder.project.entity.Project;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

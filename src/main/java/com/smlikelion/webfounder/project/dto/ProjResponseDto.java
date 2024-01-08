@@ -1,7 +1,7 @@
 // 프로젝트 전체 조회할 때 응답할 값 명시
-package com.smlikelion.webfounder.global.project.dto;
+package com.smlikelion.webfounder.project.dto;
 
-import com.smlikelion.webfounder.global.project.entity.Project;
+import com.smlikelion.webfounder.project.entity.Project;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

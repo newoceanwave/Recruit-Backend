@@ -1,11 +1,11 @@
-package com.smlikelion.webfounder.global.project;
+package com.smlikelion.webfounder.project;
 
-import com.smlikelion.webfounder.global.project.dto.ProjListResponseDto;
-import com.smlikelion.webfounder.global.project.dto.ProjRequestDto;
-import com.smlikelion.webfounder.global.project.dto.ProjResponseDto;
-import com.smlikelion.webfounder.global.project.entity.Project;
-import com.smlikelion.webfounder.global.project.exception.ProjNotfoundException;
-import com.smlikelion.webfounder.global.project.repo.ProjectRepository;
+import com.smlikelion.webfounder.project.dto.ProjListResponseDto;
+import com.smlikelion.webfounder.project.dto.ProjRequestDto;
+import com.smlikelion.webfounder.project.dto.ProjResponseDto;
+import com.smlikelion.webfounder.project.entity.Project;
+import com.smlikelion.webfounder.project.exception.ProjNotfoundException;
+import com.smlikelion.webfounder.project.repo.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

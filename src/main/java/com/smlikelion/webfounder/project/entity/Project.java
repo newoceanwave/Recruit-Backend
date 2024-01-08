@@ -1,7 +1,7 @@
-package com.smlikelion.webfounder.global.project.entity;
+package com.smlikelion.webfounder.project.entity;
 
 import com.smlikelion.webfounder.global.entity.DateEntity;
-import com.smlikelion.webfounder.global.project.dto.ProjRequestDto;
+import com.smlikelion.webfounder.project.dto.ProjRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
