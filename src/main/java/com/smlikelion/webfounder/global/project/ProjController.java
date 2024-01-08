@@ -36,5 +36,11 @@ public class ProjController {
     public BaseResponse<ProjListResponseDto> getOneProj(@PathVariable Long id){
         return new BaseResponse<>(projectService.findOneProj(id));
     }
+
+    // [DELETE] 프로젝트 삭제
+    @DeleteMapping("/{id}")
+    public BaseResponse<Long> delProj(@PathVariable Long id){
+        return new BaseResponse<>(projectService.delProj(id));
+    }
 }
 

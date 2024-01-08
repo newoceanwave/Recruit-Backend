@@ -52,4 +52,14 @@ public class ProjectService {
         return new ProjListResponseDto(project);
     }
 
+    // [DELETE] 프로젝트 삭제
+    public Long delProj(Long id){
+        try{
+            projectRepository.deleteById(id);
+            return id;
+        }catch (Exception e){
+            throw new ProjNotfoundException("프로젝트 삭제 실패");
+        }
+    }
+
 }
