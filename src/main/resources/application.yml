@@ -19,10 +19,7 @@ spring:
       username: webfounder_root
       password: webfounder1234
 
-
-
-
-
 logging:
   level:
     org.hibernate.SQL: debug
+
