@@ -36,5 +36,10 @@ public class Admin extends DateEntity {
     @NotNull
     @Enumerated(EnumType.ORDINAL)
     private Block block;
-    
+
+    @Column(name="role")
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 }

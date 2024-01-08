@@ -28,6 +28,10 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "RefreshToken 정보를 찾을 수 없습니다."),
     USERNAME_EXISTS_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
 
+    //admin
+    ALREADY_EXISTS_ACCOUNT_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 아이디입니다."),
+    ALREADY_EXISTS_NAME_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이름입니다."),
+
     //manage
     UNSUPPORTED_TRACK_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 트랙입니다."),
     MISMATCHED_YEAR_ERROR(false, HttpStatus.BAD_REQUEST.value(), "해당 년도와 일치하지 않습니다."),

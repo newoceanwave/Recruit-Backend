@@ -1,11 +1,7 @@
 package com.smlikelion.webfounder.manage.dto.request;
 
-import com.smlikelion.webfounder.Recruit.Entity.Track;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
-import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;

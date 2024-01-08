@@ -1,7 +1,7 @@
 package com.smlikelion.webfounder.admin.entity;
 
 public enum Block {
-    IsACTIVE("active"),
+    ISACTIVE("active"),
     ISBLOCK("block");
 
     private final String blockName;
