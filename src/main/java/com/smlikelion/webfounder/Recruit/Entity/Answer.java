@@ -1,8 +1,10 @@
 package com.smlikelion.webfounder.Recruit.Entity;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "answer")
@@ -14,10 +16,7 @@ public class Answer {
     @Column(name = "answer_id")
     private Long answerId;
 
-    // 일대다 관계로? ERD CLOUD 에 적혀있는 question_id 가 ENUM  타입인 것도 좀 이상한듯
-//    @Column(name = "question_id", nullable = false)
-//    @Enumerated(EnumType.STRING)
-//    private QuestionId questionId;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
@@ -26,4 +25,12 @@ public class Answer {
 
     @Column(name = "content", nullable = false)
     private String content;
+
+    @Column(name = "created_at", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
 }
