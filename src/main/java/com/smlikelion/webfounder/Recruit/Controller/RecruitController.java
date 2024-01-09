@@ -2,6 +2,8 @@ package com.smlikelion.webfounder.Recruit.Controller;// Import statements
 
 import com.smlikelion.webfounder.Recruit.Dto.Request.RecruitmentRequest;
 import com.smlikelion.webfounder.Recruit.Dto.Response.RecruitmentResponse;
+import com.smlikelion.webfounder.Recruit.Entity.Joiner;
+import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.Recruit.Service.RecruitService;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
@@ -12,8 +14,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.midi.Track;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/recruit/docs")
@@ -22,6 +26,11 @@ public class RecruitController {
 
     @Autowired
     private RecruitService recruitService;
+
+    @Autowired
+    private JoinerRepository joinerRepository;
+
+
 
     @PostMapping
     public BaseResponse<RecruitmentResponse> submitRecruitment(
@@ -42,6 +51,29 @@ public class RecruitController {
             return new BaseResponse<>(ErrorCode.NOT_FOUND);
         }
     }
+
+    @GetMapping("/{joinerId}")
+    public BaseResponse<RecruitmentResponse> getJoinerDetails(
+            @PathVariable Long joinerId) {
+        Joiner joiner = joinerRepository.findById(joinerId).orElse(null);
+
+        if (joiner != null) {
+            // Joiner를 찾은 경우, RecruitmentResponse로 변환하여 응답 반환
+            RecruitmentResponse recruitResponse = RecruitmentResponse.builder()
+                    .id(joiner.getId())
+                    .studentInfo(joiner.toStudentInfoResponse())
+                    .answerList(joiner.toAnswerListResponse())
+                    .interviewTime(joiner.getInterviewTime().keySet()) // 필요에 따라 수정
+                    .build();
+
+            return new BaseResponse<>(recruitResponse);
+        } else {
+            // Joiner를 찾지 못한 경우, 오류 응답 반환
+            return new BaseResponse<>(ErrorCode.NOT_FOUND);
+        }
+    }
+
+
 
     private void logValidationErrors(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
