@@ -1,6 +1,7 @@
 package com.smlikelion.webfounder.Recruit.Dto.Response;
 
 import com.smlikelion.webfounder.Recruit.Entity.Programmers;
+import com.smlikelion.webfounder.manage.entity.Candidate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,5 +26,6 @@ public class StudentInfoResponse {
     private String graduatedYear;
     private Programmers programmers;
     private String programmersImg;
+    private Candidate candidate;
 
 }

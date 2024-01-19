@@ -5,6 +5,8 @@ import com.smlikelion.webfounder.Recruit.Dto.Response.StudentInfoResponse;
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
+import com.smlikelion.webfounder.manage.entity.Candidate;
+import com.smlikelion.webfounder.manage.entity.Docs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.smlikelion.webfounder.Recruit.Entity.SchoolStatus;
@@ -36,8 +38,9 @@ public class RecruitService {
         joiner.setSchoolStatus(SchoolStatus.ENROLLED);
         joiner.setTrack(Track.PLANDESIGN);
 
-
-
+        // cadidate entity 생성 시 서류합 란을 reject로 초기 설정
+        Candidate candidate=new Candidate("REJECT","REJECT");
+        joiner.setCandidate(candidate);
 
         joiner = joinerRepository.save(joiner);
         StudentInfoResponse studentInfoResponse = joiner.toStudentInfoResponse();

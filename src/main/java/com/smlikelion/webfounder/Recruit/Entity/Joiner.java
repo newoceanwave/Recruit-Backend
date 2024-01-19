@@ -3,16 +3,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.smlikelion.webfounder.Recruit.Dto.Response.AnswerListResponse;
 import com.smlikelion.webfounder.Recruit.Dto.Response.StudentInfoResponse;
 import com.smlikelion.webfounder.global.entity.DateEntity;
+import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.format.annotation.DateTimeFormat;
 
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +87,11 @@ public class Joiner extends DateEntity {
     @Column(name = "graduated_year", nullable = false)
     private String graduatedYear;
 
+    @JoinColumn(name = "candidate_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private Candidate candidate;
+
+
 
     public StudentInfoResponse toStudentInfoResponse() {
         return StudentInfoResponse.builder()
@@ -103,6 +107,7 @@ public class Joiner extends DateEntity {
                 .programmers(this.programmers)
                 .programmersImg(this.programmersImageUrl)
                 .graduatedYear(this.graduatedYear)
+                .candidate(this.candidate)
                 .build();
     }
 

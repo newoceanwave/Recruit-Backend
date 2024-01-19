@@ -1,7 +1,6 @@
-package com.smlikelion.webfounder.Recruit.Repository;
+package com.smlikelion.webfounder.manage.repository;
 
-import com.smlikelion.webfounder.Recruit.Entity.Answer;
-import com.smlikelion.webfounder.Recruit.Entity.Candidate;
+import com.smlikelion.webfounder.manage.entity.Candidate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 @Repository

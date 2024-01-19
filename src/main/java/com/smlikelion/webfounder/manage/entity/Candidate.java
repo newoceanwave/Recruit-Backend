@@ -1,26 +1,24 @@
-package com.smlikelion.webfounder.Recruit.Entity;
-import com.fasterxml.jackson.annotation.JsonFormat;
+package com.smlikelion.webfounder.manage.entity;
+import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.global.entity.DateEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "candidate")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Candidate extends DateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "candidate_id")
     private Long candidateId;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "joiners_id", unique = true)
-    private Joiner joiner;
 
     @Column(name = "docs", nullable = false)
     @Enumerated(EnumType.ORDINAL)
@@ -30,4 +28,10 @@ public class Candidate extends DateEntity {
     @Enumerated(EnumType.ORDINAL)
     private Interview interview;
 
+    // joiner service에서 entity 생성 시 cadidate도 자동 생성
+    public Candidate(String docs, String interview) {
+        this.docs= Docs.valueOf(docs);
+        this.interview= Interview.valueOf(interview);
+    }
 }
+
