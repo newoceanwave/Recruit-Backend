@@ -46,13 +46,12 @@ public class Joiner extends DateEntity {
     private Integer completedSem;
 
     @Column(name = "school_status")
-    @NotNull
     @Enumerated(EnumType.ORDINAL)
     private SchoolStatus schoolStatus;
 
     @Column(name = "programmers", nullable = false)
     @Enumerated(EnumType.ORDINAL)
-    private Programmers programmers;
+    private Programmers programmers = Programmers.NOT_ENROLLED; // 기본값 설정
 
     @Column(name = "programmers_image_url")
     private String programmersImageUrl;
@@ -61,7 +60,6 @@ public class Joiner extends DateEntity {
     private String password;
 
     @Column(name = "track")
-    @NotNull
     @Enumerated(EnumType.ORDINAL)
     private Track track;
 
@@ -88,19 +86,23 @@ public class Joiner extends DateEntity {
     @Column(name = "graduated_year", nullable = false)
     private String graduatedYear;
 
+    public void setProgrammers(Programmers programmers) {
+        this.programmers = programmers;
+    }
+
 
     public StudentInfoResponse toStudentInfoResponse() {
         return StudentInfoResponse.builder()
                 .name(this.name)
-                .track(this.track.name())
+                .track(this.track != null ? this.track.getTrackName() : null)
                 .phoneNumber(this.phoneNum)
                 .studentId(Long.parseLong(this.studentId))
                 .major(this.major)
                 .portfolio(this.portfolio)
                 .password(this.password)
                 .completedSem(this.completedSem)
-                .schoolStatus(this.schoolStatus.name()) // 열거형 상수의 문자열 표현 사용
-                .programmers(this.programmers)
+                .schoolStatus(this.schoolStatus != null ? this.schoolStatus.name() : null) // 열거형에서 문자열 표현으로 변환
+                .programmers(this.programmers != null ? this.programmers.name() : Programmers.NOT_ENROLLED.name()) // 열거형에서 문자열 표현으로 변환
                 .programmersImg(this.programmersImageUrl)
                 .graduatedYear(this.graduatedYear)
                 .build();
