@@ -87,11 +87,6 @@ public class Joiner extends DateEntity {
     @Column(name = "graduated_year", nullable = false)
     private String graduatedYear;
 
-    @JoinColumn(name = "candidate_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private Candidate candidate;
-
-
 
     public StudentInfoResponse toStudentInfoResponse() {
         return StudentInfoResponse.builder()
@@ -107,7 +102,6 @@ public class Joiner extends DateEntity {
                 .programmers(this.programmers)
                 .programmersImg(this.programmersImageUrl)
                 .graduatedYear(this.graduatedYear)
-                .candidate(this.candidate)
                 .build();
     }
 

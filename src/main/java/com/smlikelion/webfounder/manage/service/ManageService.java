@@ -1,10 +1,14 @@
 package com.smlikelion.webfounder.manage.service;
 
 import com.smlikelion.webfounder.Recruit.Entity.Track;
+import com.smlikelion.webfounder.manage.dto.request.DocsPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
+import com.smlikelion.webfounder.manage.entity.Candidate;
+import com.smlikelion.webfounder.manage.entity.Docs;
 import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
+import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +25,7 @@ import java.util.stream.Collectors;
 public class ManageService {
 
     private final QuestionRepository questionRepository;
+    private final CandidateRepository candidateRepository;
 
     public DocsQuestResponse registerQuestion(DocsQuestRequest request) {
         validateCurrentYear(request.getYear());
@@ -121,6 +126,19 @@ public class ManageService {
     private void validateQuestionList(List<Question> questionList) {
         if (questionList.isEmpty()) {
             throw new NotFoundQuestionException("해당 년도 해당 트랙의 문항이 존재하지 않습니다.");
+        }
+    }
+
+    public Long docsPass(DocsPassRequestDto requestDto){
+        Candidate candidate=candidateRepository.findById(requestDto.getJoinerId()).orElseThrow(
+                ()-> new IllegalArgumentException("지원자 합격 선정 실패")
+        );
+
+        try{
+            candidate.setDocs(Docs.PASS);
+            return candidate.getCandidateId();
+        }catch (Exception e){
+            throw new IllegalArgumentException("지원자 합격 선정 실패");
         }
     }
 

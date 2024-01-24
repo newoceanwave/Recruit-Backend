@@ -1,7 +1,9 @@
 package com.smlikelion.webfounder.manage.controller;
 
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
+import com.smlikelion.webfounder.manage.dto.request.DocsPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.service.ManageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,4 +54,12 @@ public class ManageController {
             @RequestBody @Valid DocsQuestRequest request) {
         return new BaseResponse<>(manageService.updateQuestion(id, request));
     }
+
+    @Operation(summary = "서류 합격자 선정")
+    @PostMapping("/docs/add")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<Long> docsPass(@RequestBody DocsPassRequestDto requestDto){
+        return new BaseResponse<>(manageService.docsPass(requestDto));
+    }
+
 }

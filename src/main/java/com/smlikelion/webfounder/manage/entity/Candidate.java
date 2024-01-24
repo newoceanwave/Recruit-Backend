@@ -28,8 +28,13 @@ public class Candidate extends DateEntity {
     @Enumerated(EnumType.ORDINAL)
     private Interview interview;
 
+    @JoinColumn(name = "joiner_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private Joiner joiner;
+
     // joiner service에서 entity 생성 시 cadidate도 자동 생성
-    public Candidate(String docs, String interview) {
+    public Candidate(Joiner joiner, String docs, String interview) {
+        this.joiner=joiner;
         this.docs= Docs.valueOf(docs);
         this.interview= Interview.valueOf(interview);
     }

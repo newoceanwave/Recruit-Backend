@@ -54,7 +54,6 @@ public class RecruitmentRequest {
 
 
         joiner.setGraduatedYear(this.studentInfo.toJoiner().getGraduatedYear());
-        joiner.setCandidate(this.toJoiner().getCandidate());
         return joiner;
     }
 
