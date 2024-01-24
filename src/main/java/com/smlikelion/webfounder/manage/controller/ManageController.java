@@ -58,8 +58,14 @@ public class ManageController {
     @Operation(summary = "서류 합격자 선정")
     @PostMapping("/docs/add")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<Long> docsPass(@RequestBody DocsPassRequestDto requestDto){
-        return new BaseResponse<>(manageService.docsPass(requestDto));
+    public BaseResponse<String> docsPass(@RequestBody DocsPassRequestDto requestDto){
+        return new BaseResponse<>(manageService.docsPass(requestDto)+"번 지원자가 합격자 선정되었습니다.");
     }
 
+    @Operation(summary = "서류 합격자 취소")
+    @DeleteMapping("/docs/del")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<String> docsFail(@RequestBody DocsPassRequestDto requestDto){
+        return new BaseResponse<>(manageService.docsFail(requestDto)+"번 지원자가 합격자 취소되었습니다.");
+    }
 }
