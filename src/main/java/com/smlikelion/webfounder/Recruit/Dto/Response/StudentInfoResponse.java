@@ -20,11 +20,10 @@ public class StudentInfoResponse {
     private long studentId;
     private String major;
 
-
     private int completedSem;
     private String schoolStatus;
     private String graduatedYear;
-    private Programmers programmers;
+    private String programmers;
     private String programmersImg;
     private Candidate candidate;
 

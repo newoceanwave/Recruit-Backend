@@ -1,12 +1,11 @@
 package com.smlikelion.webfounder.Recruit.Dto.Response;
 
+import com.smlikelion.webfounder.Recruit.Entity.Programmers;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -15,16 +14,12 @@ import java.util.Set;
 public class RecruitmentResponse {
     private Long id;
     private StudentInfoResponse studentInfo;
-    // 지원자 질문 별 답변 목록
     private ArrayList<String> answerList;
-    //면접 시간
     private Set<String> interviewTime;
-
 
     public static RecruitmentResponseBuilder builder() {
         return new RecruitmentResponseBuilder();
     }
-
 
     public static class RecruitmentResponseBuilder {
         private Long id;
@@ -32,8 +27,10 @@ public class RecruitmentResponse {
         private ArrayList<String> answerList;
         private Set<String> interviewTime;
 
+        public static RecruitmentResponseBuilder builder() {
+            return new RecruitmentResponseBuilder();
+        }
 
-        // interviewTime 설정 메서드
         public RecruitmentResponseBuilder answerList(AnswerListResponse answerListResponse) {
             this.answerList = new ArrayList<>();
 
@@ -45,8 +42,6 @@ public class RecruitmentResponse {
                 this.answerList.add(answerListResponse.getA5());
                 this.answerList.add(answerListResponse.getA6());
                 this.answerList.add(answerListResponse.getA7());
-
-                // 나머지 필드에 대한 추가 작업
             }
 
             return this;
@@ -61,5 +56,4 @@ public class RecruitmentResponse {
             return new RecruitmentResponse(id, studentInfo, answerList, interviewTime);
         }
     }
-
 }

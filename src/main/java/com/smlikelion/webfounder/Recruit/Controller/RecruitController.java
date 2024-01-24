@@ -7,6 +7,7 @@ import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.Recruit.Service.RecruitService;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,7 +32,7 @@ public class RecruitController {
     private JoinerRepository joinerRepository;
 
 
-
+    @Operation(summary = "트랙별 서류 작성하기")
     @PostMapping
     public BaseResponse<RecruitmentResponse> submitRecruitment(
             @RequestParam("track") String track,
@@ -51,7 +52,7 @@ public class RecruitController {
             return new BaseResponse<>(ErrorCode.NOT_FOUND);
         }
     }
-
+    @Operation(summary = "트랙별 서류 작성 페이지 조회하기")
     @GetMapping("/{joinerId}")
     public BaseResponse<RecruitmentResponse> getJoinerDetails(
             @PathVariable Long joinerId) {
