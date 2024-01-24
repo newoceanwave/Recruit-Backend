@@ -5,6 +5,7 @@ import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Entity.Programmers;
 import com.smlikelion.webfounder.Recruit.Entity.SchoolStatus;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
+import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,9 +42,6 @@ public class RecruitmentRequest {
     public AnswerListRequest getAnswerListRequest() {
         return answerList;
     }
-
-
-
 }
 
 
