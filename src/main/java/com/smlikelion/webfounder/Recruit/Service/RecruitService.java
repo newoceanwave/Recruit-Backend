@@ -3,6 +3,7 @@ import com.smlikelion.webfounder.Recruit.Dto.Request.RecruitmentRequest;
 import com.smlikelion.webfounder.Recruit.Dto.Response.RecruitmentResponse;
 import com.smlikelion.webfounder.Recruit.Dto.Response.StudentInfoResponse;
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
+import com.smlikelion.webfounder.Recruit.Entity.Programmers;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,6 @@ public class RecruitService {
 
         List<String> answerList = request.getAnswerListRequest().toAnswerList();
         joiner.setAnswerList(answerList);
-
-
-        joiner.setSchoolStatus(SchoolStatus.ENROLLED);
-        joiner.setTrack(Track.PLANDESIGN);
-
-
 
 
         joiner = joinerRepository.save(joiner);
