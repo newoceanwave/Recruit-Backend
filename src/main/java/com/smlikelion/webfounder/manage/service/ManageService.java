@@ -1,6 +1,8 @@
 package com.smlikelion.webfounder.manage.service;
 
+import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
+import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.manage.dto.request.DocsPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
@@ -26,6 +28,7 @@ public class ManageService {
 
     private final QuestionRepository questionRepository;
     private final CandidateRepository candidateRepository;
+    private final JoinerRepository joinerRepository;
 
     public DocsQuestResponse registerQuestion(DocsQuestRequest request) {
         validateCurrentYear(request.getYear());
@@ -130,8 +133,11 @@ public class ManageService {
     }
 
     public Long docsPass(DocsPassRequestDto requestDto){
-        Candidate candidate=candidateRepository.findById(requestDto.getJoinerId()).orElseThrow(
-                ()-> new IllegalArgumentException("지원자 합격 선정 실패")
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId()).orElseThrow(
+                () -> new IllegalArgumentException("해당 joiner 검색 실패")
+        );
+        Candidate candidate=candidateRepository.findByJoiner(joiner).orElseThrow(
+                ()-> new IllegalArgumentException("해당 candidate 검색 실패")
         );
 
         try{
