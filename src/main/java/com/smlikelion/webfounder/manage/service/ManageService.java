@@ -141,6 +141,7 @@ public class ManageService {
         );
 
         try{
+
             candidate.setDocs(Docs.PASS);
             candidateRepository.save(candidate);
             return candidate.getJoiner().getId();

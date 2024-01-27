@@ -75,6 +75,9 @@ public class RecruitController {
     }
 
 
+    @Operation(summary = "트랙별 서류 결과 합격자 조회하기")
+    @PostMapping("/result")
+
 
     private void logValidationErrors(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
