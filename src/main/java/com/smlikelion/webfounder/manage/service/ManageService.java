@@ -134,20 +134,38 @@ public class ManageService {
 
     public Long docsPass(DocsPassRequestDto requestDto){
         Joiner joiner = joinerRepository.findById(requestDto.getJoinerId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 joiner 검색 실패")
+                () -> new NotFoundJoinerException("해당 joiner 검색 실패")
         );
         Candidate candidate=candidateRepository.findByJoiner(joiner).orElseThrow(
-                ()-> new IllegalArgumentException("해당 candidate 검색 실패")
+                ()-> new NotFoundCandidateException("해당 candidate 검색 실패")
         );
 
         try{
 
             candidate.setDocs(Docs.PASS);
             candidateRepository.save(candidate);
-            return candidate.getCandidateId();
+            return candidate.getJoiner().getId();
         }catch (Exception e){
-            throw new IllegalArgumentException("지원자 합격 선정 실패");
+            throw new InternalServerCandidateException("지원자 합격 선정 실패");
         }
     }
+
+    public Long docsFail(DocsPassRequestDto requestDto){
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId()).orElseThrow(
+                () -> new NotFoundJoinerException("해당 joiner 검색 실패")
+        );
+        Candidate candidate=candidateRepository.findByJoiner(joiner).orElseThrow(
+                ()-> new NotFoundCandidateException("해당 candidate 검색 실패")
+        );
+
+        try{
+            candidate.setDocs(Docs.REJECT);
+            candidateRepository.save(candidate);
+            return candidate.getJoiner().getId();
+        }catch (Exception e){
+            throw new InternalServerCandidateException("지원자 합격 선정 취소 실패");
+        }
+    }
+
 
 }

@@ -48,5 +48,25 @@ public class ManageExceptionHandler {
         return new BaseResponse<>(ErrorCode.MISMATCHED_TRACK_ERROR);
     }
 
+    @ExceptionHandler(NotFoundJoinerException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BaseResponse<?> handleNotFoundQuestionException(NotFoundJoinerException e, HttpServletRequest request) {
+        log.warn("MANAGE-006> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotFoundCandidateException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BaseResponse<?> handleNotFoundQuestionException(NotFoundCandidateException e, HttpServletRequest request) {
+        log.warn("MANAGE-007> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InternalServerCandidateException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public BaseResponse<?> handleNotFoundQuestionException(InternalServerCandidateException e, HttpServletRequest request) {
+        log.warn("MANAGE-008> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
 
 }
