@@ -5,6 +5,7 @@ import com.smlikelion.webfounder.Recruit.Entity.Track;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.manage.dto.request.DocsPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.smlikelion.webfounder.manage.entity.Docs;
@@ -166,5 +167,32 @@ public class ManageService {
         }
     }
 
+    public List<DocsPassResponseDto> docsPassList(String track){
+        Track requestedTrack = validateTrackName(track);
+
+        List<Joiner> joinerList = joinerRepository.findAllByTrack(requestedTrack);
+        validateJoinerList(joinerList);
+
+        return joinerList.stream()
+                .map(this::mapJoinerToDocsResponse)
+                .collect(Collectors.toList());
+    }
+
+    private void validateJoinerList(List<Joiner> joinerList){
+        if(joinerList.isEmpty()){
+            throw new NotFoundJoinerException("해당 트랙에 해당하는 지원자가 존재하지 않습니다.");
+        }
+    }
+
+    private DocsPassResponseDto mapJoinerToDocsResponse(Joiner joiner){
+        return DocsPassResponseDto.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .submissionTime(joiner.getCreatedAt().toString())
+                .build();
+    }
 
 }
