@@ -141,7 +141,9 @@ public class ManageService {
         );
 
         try{
+
             candidate.setDocs(Docs.PASS);
+            candidateRepository.save(candidate);
             return candidate.getCandidateId();
         }catch (Exception e){
             throw new IllegalArgumentException("지원자 합격 선정 실패");
