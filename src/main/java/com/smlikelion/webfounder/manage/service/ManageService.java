@@ -9,17 +9,20 @@ import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.smlikelion.webfounder.manage.entity.Docs;
+import com.smlikelion.webfounder.manage.entity.Interview;
 import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -146,7 +149,7 @@ public class ManageService {
             candidateRepository.save(candidate);
             return candidate.getJoiner().getId();
         }catch (Exception e){
-            throw new InternalServerCandidateException("지원자 합격 선정 실패");
+            throw new InternalServerCandidateException("지원자 서류 합격 선정 실패");
         }
     }
 
@@ -163,24 +166,34 @@ public class ManageService {
             candidateRepository.save(candidate);
             return candidate.getJoiner().getId();
         }catch (Exception e){
-            throw new InternalServerCandidateException("지원자 합격 선정 취소 실패");
+            throw new InternalServerCandidateException("지원자 서류 합격 선정 취소 실패");
         }
     }
+
+
 
     public List<DocsPassResponseDto> docsPassList(String track){
         Track requestedTrack = validateTrackName(track);
 
-        List<Joiner> joinerList = joinerRepository.findAllByTrack(requestedTrack);
+        // Candidate 테이블에서 Docs 값이 PASS인 candidateList 추출
+        List<Joiner> joinerList = joinerRepository.findAllById(
+                candidateRepository.findAllByDocs(Docs.PASS).stream()
+                        .map(candidate -> candidate.getJoiner().getId())
+                        .collect(Collectors.toSet())
+        );
+
         validateJoinerList(joinerList);
 
+        // 특정 track에 해당하는 Joiner만 필터링하여 최종 결과 매핑
         return joinerList.stream()
+                .filter(joiner -> joiner.getTrack().equals(requestedTrack))
                 .map(this::mapJoinerToDocsResponse)
                 .collect(Collectors.toList());
     }
 
     private void validateJoinerList(List<Joiner> joinerList){
         if(joinerList.isEmpty()){
-            throw new NotFoundJoinerException("해당 트랙에 해당하는 지원자가 존재하지 않습니다.");
+            throw new NotFoundJoinerException("해당 트랙에 합격한 지원자가 존재하지 않습니다.");
         }
     }
 
