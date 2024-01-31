@@ -69,4 +69,11 @@ public class ManageExceptionHandler {
         return new BaseResponse<>(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(InvalidInterviewPassException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse<?> handleNotFoundQuestionException(InvalidInterviewPassException e, HttpServletRequest request) {
+        log.warn("MANAGE-009> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.INVALID_INTERVIEW_PASS_ERROR);
+    }
+
 }

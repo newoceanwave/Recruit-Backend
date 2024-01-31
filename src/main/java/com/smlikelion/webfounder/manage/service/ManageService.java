@@ -5,20 +5,24 @@ import com.smlikelion.webfounder.Recruit.Entity.Track;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.manage.dto.request.DocsPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.smlikelion.webfounder.manage.entity.Docs;
+import com.smlikelion.webfounder.manage.entity.Interview;
 import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -146,7 +150,7 @@ public class ManageService {
             candidateRepository.save(candidate);
             return candidate.getJoiner().getId();
         }catch (Exception e){
-            throw new InternalServerCandidateException("지원자 합격 선정 실패");
+            throw new InternalServerCandidateException("지원자 서류 합격 선정 실패");
         }
     }
 
@@ -163,9 +167,82 @@ public class ManageService {
             candidateRepository.save(candidate);
             return candidate.getJoiner().getId();
         }catch (Exception e){
-            throw new InternalServerCandidateException("지원자 합격 선정 취소 실패");
+            throw new InternalServerCandidateException("지원자 서류 합격 선정 취소 실패");
         }
     }
 
+    public Long interviewPass(DocsPassRequestDto requestDto){
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId()).orElseThrow(
+                () -> new NotFoundJoinerException("해당 joiner 검색 실패")
+        );
+        Candidate candidate=candidateRepository.findByJoiner(joiner).orElseThrow(
+                ()-> new NotFoundCandidateException("해당 candidate 검색 실패")
+        );
+
+        if(candidate.getDocs().equals(Docs.REJECT)){
+            throw new InvalidInterviewPassException("지원자 면접 합격 선정 실패");
+        }
+
+        try{
+            candidate.setInterview(Interview.PASS);
+            candidateRepository.save(candidate);
+            return candidate.getJoiner().getId();
+        }catch (Exception e){
+            throw new InternalServerCandidateException("지원자 면접 합격 선정 실패");
+        }
+    }
+
+    public Long interviewFail(DocsPassRequestDto requestDto){
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId()).orElseThrow(
+                () -> new NotFoundJoinerException("해당 joiner 검색 실패")
+        );
+        Candidate candidate=candidateRepository.findByJoiner(joiner).orElseThrow(
+                ()-> new NotFoundCandidateException("해당 candidate 검색 실패")
+        );
+
+        try{
+            candidate.setInterview(Interview.REJECT);
+            candidateRepository.save(candidate);
+            return candidate.getJoiner().getId();
+        }catch (Exception e){
+            throw new InternalServerCandidateException("지원자 면접 합격 선정 취소 실패");
+        }
+    }
+
+    public List<DocsPassResponseDto> docsPassList(String track){
+        Track requestedTrack = validateTrackName(track);
+
+        // Candidate 테이블에서 Docs 값이 PASS인 candidateList 추출
+        List<Joiner> joinerList = joinerRepository.findAllById(
+                candidateRepository.findAllByDocs(Docs.PASS).stream()
+                        .map(candidate -> candidate.getJoiner().getId())
+                        .collect(Collectors.toSet())
+        );
+
+        validateJoinerList(joinerList);
+
+        // 특정 track에 해당하는 Joiner만 필터링하여 최종 결과 매핑
+        return joinerList.stream()
+                .filter(joiner -> joiner.getTrack().equals(requestedTrack))
+                .map(this::mapJoinerToDocsResponse)
+                .collect(Collectors.toList());
+    }
+
+    private void validateJoinerList(List<Joiner> joinerList){
+        if(joinerList.isEmpty()){
+            throw new NotFoundJoinerException("해당 트랙에 합격한 지원자가 존재하지 않습니다.");
+        }
+    }
+
+    private DocsPassResponseDto mapJoinerToDocsResponse(Joiner joiner){
+        return DocsPassResponseDto.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .submissionTime(joiner.getCreatedAt().toString())
+                .build();
+    }
 
 }
