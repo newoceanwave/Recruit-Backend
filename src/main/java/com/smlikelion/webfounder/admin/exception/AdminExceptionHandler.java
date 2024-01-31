@@ -22,4 +22,16 @@ public class AdminExceptionHandler {
         log.warn("ADMIN-002> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
         return new BaseResponse<>(ErrorCode.ALREADY_EXISTS_NAME_ERROR);
     }
+
+    @ExceptionHandler(NotFoundAdminException.class)
+    public BaseResponse<?> handleNotFoundAdminException(NotFoundAdminException e, HttpServletRequest request) {
+        log.warn("ADMIN-003> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.NOT_FOUND_ADMIN_ERROR);
+    }
+
+    @ExceptionHandler(UnsupportedRoleException.class)
+    public BaseResponse<?> handleUnsupportedRoleException(UnsupportedRoleException e, HttpServletRequest request) {
+        log.warn("ADMIN-004> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.UNSUPPORTED_ROLE_ERROR);
+    }
 }
