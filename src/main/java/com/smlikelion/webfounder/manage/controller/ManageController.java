@@ -62,14 +62,28 @@ public class ManageController {
     @PostMapping("/docs/add")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<String> docsPass(@RequestBody DocsPassRequestDto requestDto){
-        return new BaseResponse<>(manageService.docsPass(requestDto)+"번 지원자가 합격자 선정되었습니다.");
+        return new BaseResponse<>(manageService.docsPass(requestDto)+"번 지원자가 서류 합격자 선정되었습니다.");
     }
 
     @Operation(summary = "서류 합격자 취소")
     @DeleteMapping("/docs/del")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<String> docsFail(@RequestBody DocsPassRequestDto requestDto){
-        return new BaseResponse<>(manageService.docsFail(requestDto)+"번 지원자가 합격자 취소되었습니다.");
+        return new BaseResponse<>(manageService.docsFail(requestDto)+"번 지원자가 서류 합격자 취소되었습니다.");
+    }
+
+    @Operation(summary = "면접 합격자 선정")
+    @PostMapping("/interview/add")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<String> interviewPass(@RequestBody DocsPassRequestDto requestDto){
+        return new BaseResponse<>(manageService.interviewPass(requestDto)+"번 지원자가 면접 합격자 선정되었습니다.");
+    }
+
+    @Operation(summary = "면접 합격자 취소")
+    @DeleteMapping("/interview/del")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<String> interviewFail(@RequestBody DocsPassRequestDto requestDto){
+        return new BaseResponse<>(manageService.interviewFail(requestDto)+"번 지원자가 면접 합격자 취소되었습니다.");
     }
 
     @Operation(summary = "서류 합격자 전채 조회")

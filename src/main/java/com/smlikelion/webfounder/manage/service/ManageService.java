@@ -170,7 +170,43 @@ public class ManageService {
         }
     }
 
+    public Long interviewPass(DocsPassRequestDto requestDto){
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId()).orElseThrow(
+                () -> new NotFoundJoinerException("해당 joiner 검색 실패")
+        );
+        Candidate candidate=candidateRepository.findByJoiner(joiner).orElseThrow(
+                ()-> new NotFoundCandidateException("해당 candidate 검색 실패")
+        );
 
+        if(candidate.getDocs().equals(Docs.REJECT)){
+            throw new InvalidInterviewPassException("지원자 면접 합격 선정 실패");
+        }
+
+        try{
+            candidate.setInterview(Interview.PASS);
+            candidateRepository.save(candidate);
+            return candidate.getJoiner().getId();
+        }catch (Exception e){
+            throw new InternalServerCandidateException("지원자 면접 합격 선정 실패");
+        }
+    }
+
+    public Long interviewFail(DocsPassRequestDto requestDto){
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId()).orElseThrow(
+                () -> new NotFoundJoinerException("해당 joiner 검색 실패")
+        );
+        Candidate candidate=candidateRepository.findByJoiner(joiner).orElseThrow(
+                ()-> new NotFoundCandidateException("해당 candidate 검색 실패")
+        );
+
+        try{
+            candidate.setInterview(Interview.REJECT);
+            candidateRepository.save(candidate);
+            return candidate.getJoiner().getId();
+        }catch (Exception e){
+            throw new InternalServerCandidateException("지원자 면접 합격 선정 취소 실패");
+        }
+    }
 
     public List<DocsPassResponseDto> docsPassList(String track){
         Track requestedTrack = validateTrackName(track);
