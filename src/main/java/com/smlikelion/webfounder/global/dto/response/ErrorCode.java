@@ -39,9 +39,7 @@ public enum ErrorCode {
     //result
     MISSING_FIELD_ERROR(false, HttpStatus.BAD_REQUEST.value(), "입력란을 비워서 요청하는 경우입니다."),
     PASSWORD_INCORRECT_ERROR(false, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
-    MEMBER_NOT_FOUND_ERROR(false, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 회원 정보입니다.")
-
-
+    MEMBER_NOT_FOUND_ERROR(false, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 회원 정보입니다.");
 
 
     private Boolean isSuccess;

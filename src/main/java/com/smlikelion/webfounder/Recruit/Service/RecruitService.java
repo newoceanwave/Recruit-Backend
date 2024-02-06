@@ -1,18 +1,15 @@
 package com.smlikelion.webfounder.Recruit.Service;
+import com.smlikelion.webfounder.Recruit.Dto.Request.MailRequestDto;
 import com.smlikelion.webfounder.Recruit.Dto.Request.RecruitmentRequest;
 import com.smlikelion.webfounder.Recruit.Dto.Response.RecruitmentResponse;
 import com.smlikelion.webfounder.Recruit.Dto.Response.StudentInfoResponse;
-import com.smlikelion.webfounder.Recruit.Entity.Joiner;
-import com.smlikelion.webfounder.Recruit.Entity.Programmers;
-import com.smlikelion.webfounder.Recruit.Entity.Track;
+import com.smlikelion.webfounder.Recruit.Entity.*;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
+import com.smlikelion.webfounder.Recruit.Repository.MailRepository;
 import com.smlikelion.webfounder.manage.entity.Candidate;
-import com.smlikelion.webfounder.manage.entity.Docs;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.smlikelion.webfounder.Recruit.Entity.SchoolStatus;
 
 import java.util.List;
 import java.util.Set;
@@ -25,6 +22,7 @@ public class RecruitService {
 
     private final JoinerRepository joinerRepository;
     private final CandidateRepository candidateRepository;
+    private final MailRepository mailRepository;
 
     public RecruitmentResponse registerRecruitment(RecruitmentRequest request) {
         Joiner joiner = request.getStudentInfo().toJoiner();
@@ -52,6 +50,12 @@ public class RecruitService {
     }
 
 
-
-
+    public String mailSubmit(MailRequestDto requestDto) {
+        Mail mail=mailRepository.save(
+                Mail.builder()
+                        .emailAdd(requestDto.getEmailAdd())
+                        .build()
+        );
+        return mail.getEmailAdd();
+    }
 }
