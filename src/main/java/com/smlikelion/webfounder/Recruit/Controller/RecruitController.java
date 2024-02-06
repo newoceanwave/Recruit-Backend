@@ -2,6 +2,7 @@ package com.smlikelion.webfounder.Recruit.Controller;// Import statements
 
 import com.smlikelion.webfounder.Recruit.Dto.Request.MailRequestDto;
 import com.smlikelion.webfounder.Recruit.Dto.Request.RecruitmentRequest;
+import com.smlikelion.webfounder.Recruit.Dto.Response.MailResponseDto;
 import com.smlikelion.webfounder.Recruit.Dto.Response.RecruitmentResponse;
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
@@ -83,9 +84,16 @@ public class RecruitController {
     }
 
     @Operation(summary = "지원자 메일 제출")
-    @PostMapping
+    @PostMapping("/mail")
     private BaseResponse<String> mailSubmit(@RequestBody MailRequestDto requestDto){
         return new BaseResponse<>(recruitService.mailSubmit(requestDto)+" 등록되었습니다.");
     }
+
+    @Operation(summary = "지원자 메일 전체 조회")
+    @GetMapping("/mail")
+    private BaseResponse<List<String>> mailList(){
+        return new BaseResponse<>(recruitService.findAllmail());
+    }
+
 
 }
