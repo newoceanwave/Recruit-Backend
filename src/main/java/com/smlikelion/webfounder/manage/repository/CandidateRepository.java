@@ -15,4 +15,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     Optional<Candidate> findByJoiner(Joiner joiner);
     List<Candidate> findAllByDocs(Docs docs);
     List<Candidate> findAllByDocsAndInterview(Docs docs, Interview interview);
+    Candidate findByJoinerAndDocs(Joiner joiner, Docs docs);
+    Candidate findByJoinerAndInterview(Joiner joiner, Interview interview);
 }
