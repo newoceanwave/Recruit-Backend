@@ -4,7 +4,7 @@ import com.smlikelion.webfounder.project.dto.ProjListResponseDto;
 import com.smlikelion.webfounder.project.dto.ProjRequestDto;
 import com.smlikelion.webfounder.project.dto.ProjResponseDto;
 import com.smlikelion.webfounder.project.entity.Project;
-import com.smlikelion.webfounder.project.exception.ProjNotfoundException;
+import com.smlikelion.webfounder.project.exception.NotfoundProjException;
 import com.smlikelion.webfounder.project.repo.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class ProjectService {
             projectRepository.save(project);
             return new ProjRequestDto(project);
         }catch (Exception e){
-            throw new ProjNotfoundException("프로젝트 작성 실패");
+            throw new NotfoundProjException("프로젝트 작성 실패");
 
         }
     }
@@ -41,14 +41,14 @@ public class ProjectService {
             }
             return responseDtoList;
         }catch (Exception e){
-            throw new ProjNotfoundException("프로젝트 전체 조회 실패");
+            throw new NotfoundProjException("프로젝트 전체 조회 실패");
         }
     }
 
     // [GET] 프로젝트 상세 조회
     public ProjListResponseDto findOneProj(Long id){
         Project project=projectRepository.findById(id).orElseThrow(
-                ()-> new ProjNotfoundException("프로젝트 상세 조회 실패")
+                ()-> new NotfoundProjException("프로젝트 상세 조회 실패")
         );
         return new ProjListResponseDto(project);
     }
@@ -59,7 +59,7 @@ public class ProjectService {
             projectRepository.deleteById(id);
             return id;
         }catch (Exception e){
-            throw new ProjNotfoundException("프로젝트 삭제 실패");
+            throw new NotfoundProjException("프로젝트 삭제 실패");
         }
     }
 
@@ -67,7 +67,7 @@ public class ProjectService {
     @Transactional
     public ProjListResponseDto updateProj(Long id, ProjRequestDto requestDto) {
         Project project = projectRepository.findById(id).orElseThrow(
-                ()-> new ProjNotfoundException("프로젝트 수정 실패")
+                ()-> new NotfoundProjException("프로젝트 수정 실패")
         );
 
         try{
@@ -84,7 +84,7 @@ public class ProjectService {
             project.setBgImg(requestDto.getBgImg());
             return new ProjListResponseDto(project);
         }catch (Exception e){
-            throw new ProjNotfoundException("프로젝트 수정 실패");
+            throw new NotfoundProjException("프로젝트 수정 실패");
         }
 
     }
