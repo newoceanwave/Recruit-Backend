@@ -85,8 +85,8 @@ public class RecruitController {
 
     @Operation(summary = "지원자 메일 제출")
     @PostMapping("/mail")
-    private BaseResponse<String> mailSubmit(@RequestBody MailRequestDto requestDto){
-        return new BaseResponse<>(recruitService.mailSubmit(requestDto)+" 등록되었습니다.");
+    private BaseResponse<String> mailSubmit(@RequestBody @Valid MailRequestDto requestDto){
+        return new BaseResponse<>(ErrorCode.CREATED,recruitService.mailSubmit(requestDto)+" 등록되었습니다.");
     }
 
     @Operation(summary = "지원자 메일 전체 조회")

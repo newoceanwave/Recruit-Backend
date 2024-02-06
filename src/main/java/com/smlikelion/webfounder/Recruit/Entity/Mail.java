@@ -23,7 +23,6 @@ public class Mail extends DateEntity {
     private Long mailId;
 
     @Column(name = "email_address", nullable = false)
-    @Email(message = "이메일 형식에 맞지 않습니다.")
     private String emailAdd;
 
 
