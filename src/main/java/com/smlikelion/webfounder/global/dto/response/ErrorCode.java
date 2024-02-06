@@ -34,14 +34,13 @@ public enum ErrorCode {
     ALREADY_EXISTS_QUESTION_NUMBER_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 해당 년도, 해당 트랙에 존재하는 문항 번호입니다."),
     NOT_FOUND_QUESTION_ERROR(false, HttpStatus.BAD_REQUEST.value(), "해당 문항을 찾을 수 없습니다."),
     MISMATCHED_TRACK_ERROR(false, HttpStatus.BAD_REQUEST.value(), "해당 트랙과 일치하지 않습니다."),
-    INVALID_INTERVIEW_PASS_ERROR(false,HttpStatus.BAD_REQUEST.value(),"해당 지원자는 서류 불합격자 입니다."),
+    INVALID_INTERVIEW_PASS_ERROR(false,HttpStatus.BAD_REQUEST.value(),"서류 불합격자가 포함되어 있습니다."),
 
     //result
     MISSING_FIELD_ERROR(false, HttpStatus.BAD_REQUEST.value(), "입력란을 비워서 요청하는 경우입니다."),
     PASSWORD_INCORRECT_ERROR(false, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
     MEMBER_NOT_FOUND_ERROR(false, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 회원 정보입니다.")
 
-    ;
 
 
 
