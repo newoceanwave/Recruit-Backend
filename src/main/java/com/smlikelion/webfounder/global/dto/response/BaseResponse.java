@@ -34,4 +34,16 @@ public class BaseResponse<T> {
         this.message = errorCode.getMessage();
         this.result = result;
     }
+    public BaseResponse(Boolean isSuccess, int code, String message) {
+        this.isSuccess = isSuccess;
+        this.code = code;
+        this.message = message;
+    }
+
+    public BaseResponse(int code, String message, T result) {
+        this.isSuccess = true;
+        this.code = code;
+        this.message = message;
+        this.result = result;
+    }
 }
