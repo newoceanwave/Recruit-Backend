@@ -3,6 +3,7 @@ package com.smlikelion.webfounder.manage.controller;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.service.ManageService;
@@ -96,4 +97,20 @@ public class ManageController {
     public BaseResponse<List<DocsPassResponseDto>> interviewPassList(@RequestParam("track") String track){
         return new BaseResponse<>(manageService.interviewPassList(track));
     }
+    @Operation(summary = "서류 합격자 면접 시간 관리")
+    @PostMapping("/interviewtime")
+
+    public BaseResponse<String> setInterviewTime(@RequestBody InterviewTimeRequest requestDto) {
+        String message = manageService.setInterviewTime(requestDto);
+        return new BaseResponse<>(message);
+    }
+
+    @Operation(summary = "서류 합격자 면접 시간 수정")
+    @PutMapping("/interviewtime")
+    public BaseResponse<String> updateInterviewTime(@RequestBody InterviewTimeRequest request) {
+        String message = manageService.setInterviewTime(request);
+        return new BaseResponse<>(HttpStatus.OK.value(), "면접 시간 수정", message);
+    }
+
+
 }
