@@ -1,8 +1,11 @@
 package com.smlikelion.webfounder.manage.controller;
 
+import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
+import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.service.ManageService;
@@ -10,9 +13,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.smlikelion.webfounder.Recruit.Entity.Joiner;
+
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/manage")
@@ -20,6 +26,7 @@ import java.util.List;
 public class ManageController {
 
     private final ManageService manageService;
+    private final JoinerRepository joinerRepository;
 
     @Operation(summary = "서류 질문 등록하기")
     @PostMapping("/docs/quest")
@@ -96,4 +103,33 @@ public class ManageController {
     public BaseResponse<List<DocsPassResponseDto>> interviewPassList(@RequestParam("track") String track){
         return new BaseResponse<>(manageService.interviewPassList(track));
     }
+    @Operation(summary = "서류 합격자 면접 시간 관리")
+    @PostMapping("/interviewtime")
+
+    public BaseResponse<String> setInterviewTime(@RequestBody InterviewTimeRequest requestDto) {
+        String message = manageService.setInterviewTime(requestDto);
+        return new BaseResponse<>(message);
+    }
+
+    @Operation(summary = "서류 합격자 면접 시간 수정")
+    @PutMapping("/interviewtime")
+    public BaseResponse<String> updateInterviewTime(@RequestBody InterviewTimeRequest request) {
+        String message = manageService.setInterviewTime(request);
+        return new BaseResponse<>(HttpStatus.OK.value(), "면접 시간 수정", message);
+    }
+
+    @Operation(summary = "지원자 희망 면접 시간 조회하기")
+    @GetMapping("/interviewtime/{joinerId}")
+    public BaseResponse<Map<String, String>> getInterviewTime(
+            @PathVariable Long joinerId) {
+        Joiner joiner = joinerRepository.findById(joinerId).orElse(null);
+        if (joiner != null) {
+            return new BaseResponse<>(joiner.getInterviewTime());
+        } else {
+            // Joiner를 찾지 못한 경우, 오류 응답 반환
+            return new BaseResponse<>(ErrorCode.NOT_FOUND);
+        }
+    }
+
+
 }

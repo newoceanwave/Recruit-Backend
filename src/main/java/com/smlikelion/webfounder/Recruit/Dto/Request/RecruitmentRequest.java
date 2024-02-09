@@ -33,8 +33,11 @@ public class RecruitmentRequest {
     @NotNull
     private Map<String, String> interview_time;
 
+
+
     public Joiner toJoiner() {
         Joiner joiner = studentInfo.toJoiner();
+        joiner.setInterviewTime(interview_time);
         return joiner;
     }
 
