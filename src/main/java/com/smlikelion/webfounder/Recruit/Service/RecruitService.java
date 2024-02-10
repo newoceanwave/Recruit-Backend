@@ -25,7 +25,7 @@ public class RecruitService {
 
     private final JoinerRepository joinerRepository;
     private final CandidateRepository candidateRepository;
-    private final MailRepository mailRepository;
+
 
     public RecruitmentResponse registerRecruitment(RecruitmentRequest request) {
         Joiner joiner = request.getStudentInfo().toJoiner();
@@ -50,29 +50,5 @@ public class RecruitService {
                 .answerList(joiner.toAnswerListResponse())
                 .interviewTime(interviewTime)
                 .build();
-    }
-
-
-    public String mailSubmit(MailRequestDto requestDto) {
-        Mail mail=mailRepository.save(
-                Mail.builder()
-                        .emailAdd(requestDto.getEmailAdd())
-                        .build()
-        );
-        return mail.getEmailAdd();
-    }
-
-    public List<String> findAllmail(){
-        try{
-            List<Mail> mailList=mailRepository.findAll();
-            List<String> result=new ArrayList<>();
-
-            for(Mail mail:mailList){
-                result.add(mail.getEmailAdd());
-            }
-            return result;
-        }catch (Exception e){
-            throw new NotFoundEmailException("이메일 전체 조회 실패");
-        }
     }
 }
