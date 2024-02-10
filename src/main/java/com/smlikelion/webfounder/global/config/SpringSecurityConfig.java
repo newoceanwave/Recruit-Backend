@@ -54,12 +54,12 @@ public class SpringSecurityConfig {
                             .anyRequest().authenticated()
             )
             .addFilterAfter(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class)
-            .exceptionHandling((exceptionConfig) -> {
-                exceptionConfig
-                        .authenticationEntryPoint(unauthorizedEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler);
-            });
+            .addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class);
+//            .exceptionHandling((exceptionConfig) -> {
+//                exceptionConfig
+//                        .authenticationEntryPoint(unauthorizedEntryPoint)
+//                        .accessDeniedHandler(accessDeniedHandler);
+//            });
 
         return httpSecurity.build();
     }

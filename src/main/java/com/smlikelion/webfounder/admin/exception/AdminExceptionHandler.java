@@ -41,4 +41,10 @@ public class AdminExceptionHandler {
         return new BaseResponse<>(ErrorCode.INVALID_PASSWORD_ERROR);
     }
 
+    @ExceptionHandler(UnauthorizedRoleException.class)
+    public BaseResponse<?> handleUnauthorizedRoleException(UnauthorizedRoleException e, HttpServletRequest request) {
+        log.warn("ADMIN-006> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.UNAUTHORIZED_ROLE_ERROR);
+    }
+
 }

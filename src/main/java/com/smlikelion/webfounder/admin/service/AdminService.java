@@ -11,12 +11,14 @@ import com.smlikelion.webfounder.admin.entity.Block;
 import com.smlikelion.webfounder.admin.entity.Role;
 import com.smlikelion.webfounder.admin.exception.*;
 import com.smlikelion.webfounder.admin.repository.AdminRepository;
+import com.smlikelion.webfounder.security.AuthInfo;
 import com.smlikelion.webfounder.security.JwtTokenProvider;
 import com.smlikelion.webfounder.security.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -36,7 +38,7 @@ public class AdminService {
        Admin admin = adminRepository.save(
                Admin.builder()
                        .accountId("smlikelion")
-                       .password("smlikelion1234")
+                       .password(passwordEncoder.encode("smlikelion1234"))
                        .name("admin")
                        .role(Role.SUPERUSER)
                        .block(Block.ISACTIVE)
@@ -46,23 +48,53 @@ public class AdminService {
        log.info("SuperUser created: {}", admin);
    }
 
-   public UpdateRoleResponse updateRoles(UpdateRoleRequest request) {
-       Admin admin = adminRepository.findByAdminIdAndAccountId(request.getId(), request.getAccountId())
-               .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
+//   @Transactional
+//   public UpdateRoleResponse updateRoles(AuthInfo authInfo, UpdateRoleRequest request) {
+//       System.out.println("아이디: " + authInfo.getAccountId());
+//       System.out.println("역할: " + authInfo.getRoles().get(0));
+//       if(!authInfo.getRoles().get(0).equals(Role.SUPERUSER)) {
+//           throw new UnauthorizedRoleException("권한이 없습니다.");
+//       }
+//       Admin admin = adminRepository.findByAdminIdAndAccountId(request.getId(), request.getAccountId())
+//               .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
+//
+//       System.out.println("역할: " + request.getRole());
+//       if(request.getRole().toUpperCase().equals(Role.MANAGER.name())) {
+//           admin.setRole(Role.MANAGER);
+//           adminRepository.save(admin);
+//       } else if(request.getRole().toUpperCase().equals(Role.USER.name())) {
+//           admin.setRole(Role.USER);
+//           adminRepository.save(admin);
+//       } else {
+//           throw new UnsupportedRoleException("해당하는 역할이 없습니다.");
+//       }
+//
+//       return mapAdminToUpdateRoleResponse(admin);
+//   }
 
-       if(request.getRole().toUpperCase().equals(Role.MANAGER.name())) {
-           admin.setRole(Role.MANAGER);
-           adminRepository.save(admin);
-       } else if(request.getRole().toUpperCase().equals(Role.USER.name())) {
-           admin.setRole(Role.USER);
-           adminRepository.save(admin);
-       } else {
-           throw new UnsupportedRoleException("해당하는 역할이 없습니다.");
-       }
+    @Transactional
+    public UpdateRoleResponse updateRoles(UpdateRoleRequest request) {
+//        System.out.println("아이디: " + authInfo.getAccountId());
+//        System.out.println("역할: " + authInfo.getRoles().get(0));
+//        if(!authInfo.getRoles().get(0).equals(Role.SUPERUSER)) {
+//            throw new UnauthorizedRoleException("권한이 없습니다.");
+//        }
+        Admin admin = adminRepository.findByAdminIdAndAccountId(request.getId(), request.getAccountId())
+                .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
 
-       return mapAdminToUpdateRoleResponse(admin);
-   }
+        System.out.println("역할: " + request.getRole());
+        if(request.getRole().toUpperCase().equals(Role.MANAGER.name())) {
+            admin.setRole(Role.MANAGER);
+            adminRepository.save(admin);
+        } else if(request.getRole().toUpperCase().equals(Role.USER.name())) {
+            admin.setRole(Role.USER);
+            adminRepository.save(admin);
+        } else {
+            throw new UnsupportedRoleException("해당하는 역할이 없습니다.");
+        }
 
+        return mapAdminToUpdateRoleResponse(admin);
+    }
     public SignUpResponse signUp(SignUpRequest request) {
 
         if(adminRepository.existsByAccountId(request.getAccountId())) {
@@ -86,6 +118,7 @@ public class AdminService {
         return mapAdminToSignUpResponse(admin);
     }
 
+    @Transactional
     public SignInResponse signIn(SignInRequest request) {
         Admin admin = adminRepository.findByAccountId(request.getAccountId())
                 .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
@@ -97,6 +130,7 @@ public class AdminService {
         TokenInfo accessToken = tokenProvider.createAccessToken(admin.getAccountId(), admin.getRole());
         TokenInfo refreshToken = tokenProvider.createRefreshToken(admin.getAccountId(), admin.getRole());
         admin.updateRefreshToken(refreshToken.getToken());
+        System.out.println("accessToken: " + accessToken.getToken());
         return mapAdminToSignInResponse(admin);
     }
 
@@ -107,7 +141,6 @@ public class AdminService {
                 .name(admin.getName())
                 .build();
     }
-
     private SignInResponse mapAdminToSignInResponse(Admin admin) {
         return SignInResponse.builder()
                 .id(admin.getAdminId())

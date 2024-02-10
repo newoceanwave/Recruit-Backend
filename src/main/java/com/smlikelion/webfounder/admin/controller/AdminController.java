@@ -8,9 +8,13 @@ import com.smlikelion.webfounder.admin.dto.response.SignUpResponse;
 import com.smlikelion.webfounder.admin.dto.response.UpdateRoleResponse;
 import com.smlikelion.webfounder.admin.service.AdminService;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
+import com.smlikelion.webfounder.security.Auth;
+import com.smlikelion.webfounder.security.AuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,7 +38,21 @@ public class AdminController {
     @PutMapping("/roles")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<UpdateRoleResponse> updateRoles(
+            // @Auth AuthInfo authInfo,
             @RequestBody @Valid UpdateRoleRequest request) {
+//        System.out.println("아이디: ");
+//        // 현재 사용자의 인증 정보 가져오기
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        // UserDetails를 구현한 클래스인 경우
+//        if (principal instanceof UserDetails) {
+//            UserDetails userDetails = (UserDetails) principal;
+//            String username = userDetails.getUsername();
+//            // username을 사용하거나 필요한 정보를 가져올 수 있습니다.
+//        } else {
+//            // UserDetails를 구현하지 않은 경우, principal은 사용자 이름 또는 기타 정보가 될 수 있습니다.
+//            String username = principal.toString();
+//        }
         return new BaseResponse<>(adminService.updateRoles(request));
     }
 

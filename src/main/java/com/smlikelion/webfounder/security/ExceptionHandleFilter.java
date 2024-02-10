@@ -8,6 +8,9 @@ import com.smlikelion.webfounder.security.exception.InvalidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,6 +27,15 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
+        System.out.println("ExceptionHandleFilter is invoked!");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            System.out.println("userDetails.getUsername() = " + userDetails.getUsername());
+        }
+        else{
+            System.out.println("authentication is null");
+        }
         try {
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException exception) {

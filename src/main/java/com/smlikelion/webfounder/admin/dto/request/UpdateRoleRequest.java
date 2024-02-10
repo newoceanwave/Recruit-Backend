@@ -2,11 +2,13 @@ package com.smlikelion.webfounder.admin.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UpdateRoleRequest {
     @NotNull(message = "아이디 키을 입력해야 합니다.")
     private Long id;
