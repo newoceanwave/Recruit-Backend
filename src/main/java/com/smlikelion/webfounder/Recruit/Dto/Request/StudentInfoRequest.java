@@ -20,12 +20,19 @@ public class StudentInfoRequest {
 
     @NotBlank(message = "전화번호를 입력해주세요.")
     private String phoneNumber;
+
+    @NotBlank(message = "이메일을 입력해주세요.")
+    private String email;
+
     @NotNull(message = "학번을 입력해주세요.")
     private long studentId;
+
     @NotBlank(message = "전공을 입력해주세요.")
     private String major;
+
     @NotNull(message = "수료학기를 선택해주세요.")
     private int completedSem;
+
     @NotNull(message = "포트폴리오를 작성해주세요.")
     private String Portfolio;
 
@@ -43,6 +50,11 @@ public class StudentInfoRequest {
     @NotBlank(message = "졸업년도를 입력해주세요.")
     private String graduatedYear;
 
+    @NotNull(message = "개인정보 동의 여부를 선택해주세요.")
+    private boolean agreeToTerms;
+
+    @NotNull(message = "행사 필수참여 동의 여부를 선택해주세요.")
+    private boolean agreeToEventParticipation;
 
 
     public Joiner toJoiner() {
@@ -50,6 +62,7 @@ public class StudentInfoRequest {
         joiner.setName(this.getName());
         joiner.setTrack(convertToTrackEnum(this.getTrack()));  // Track 열거형으로 변환
         joiner.setPhoneNum(this.getPhoneNumber());
+        joiner.setEmail(this.getEmail());
         joiner.setStudentId(String.valueOf(this.getStudentId()));
         joiner.setMajor(this.getMajor());
         joiner.setCompletedSem(this.getCompletedSem());
@@ -59,6 +72,8 @@ public class StudentInfoRequest {
         joiner.setPassword(this.getPassword());
         joiner.setProgrammersImageUrl(this.getProgrammersImg());
         joiner.setGraduatedYear(this.getGraduatedYear());
+        joiner.setAgreeToTerms(this.isAgreeToTerms()); // 개인정보 동의 여부 설정
+        joiner.setAgreeToEventParticipation(this.isAgreeToEventParticipation()); // 행사 필수참여 동의 여부 설정
         return joiner;
     }
 
