@@ -34,4 +34,11 @@ public class AdminExceptionHandler {
         log.warn("ADMIN-004> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
         return new BaseResponse<>(ErrorCode.UNSUPPORTED_ROLE_ERROR);
     }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public BaseResponse<?> handleInvalidPasswordException(InvalidPasswordException e, HttpServletRequest request) {
+        log.warn("ADMIN-005> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.INVALID_PASSWORD_ERROR);
+    }
+
 }

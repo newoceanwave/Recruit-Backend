@@ -1,7 +1,9 @@
 package com.smlikelion.webfounder.admin.controller;
 
+import com.smlikelion.webfounder.admin.dto.request.SignInRequest;
 import com.smlikelion.webfounder.admin.dto.request.SignUpRequest;
 import com.smlikelion.webfounder.admin.dto.request.UpdateRoleRequest;
+import com.smlikelion.webfounder.admin.dto.response.SignInResponse;
 import com.smlikelion.webfounder.admin.dto.response.SignUpResponse;
 import com.smlikelion.webfounder.admin.dto.response.UpdateRoleResponse;
 import com.smlikelion.webfounder.admin.service.AdminService;
@@ -28,7 +30,7 @@ public class AdminController {
         return new BaseResponse<>(adminService.signUp(request));
     }
 
-    @Operation(summary="유저 역핣부여")
+    @Operation(summary="유저 역할부여")
     @PutMapping("/roles")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<UpdateRoleResponse> updateRoles(
@@ -36,14 +38,15 @@ public class AdminController {
         return new BaseResponse<>(adminService.updateRoles(request));
     }
 
-    /*
     @Operation(summary="관리자 로그인")
     @PostMapping("/signin")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<String> signIn() {
-        return new BaseResponse<>("로그인 성공");
+    public BaseResponse<SignInResponse> signIn(
+            @RequestBody @Valid SignInRequest request) {
+        return new BaseResponse<>(adminService.signIn(request));
     }
 
+    /*
     @Operation(summary="관리자 로그아웃")
     @PostMapping("/signout")
     @ResponseStatus(HttpStatus.OK)
