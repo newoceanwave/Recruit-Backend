@@ -8,6 +8,7 @@ import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
+import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
 import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.smlikelion.webfounder.manage.entity.Docs;
 import com.smlikelion.webfounder.manage.entity.Interview;
@@ -301,29 +302,43 @@ public class ManageService {
                 .build();
     }
 
-    public List<DocsPassResponseDto> interviewPassList(String track){
+    public List<InterviewPassResponseDto> interviewPassList(String track){
         Track requestedTrack = validateTrackName(track);
 
-        // Candidate 테이블에서 Docs와 Interview 값이 PASS인 candidateList 추출
-        List<Joiner> joinerList = joinerRepository.findAllById(
-                candidateRepository.findAllByDocsAndInterview(Docs.PASS,Interview.PASS).stream()
-                        .map(candidate -> candidate.getJoiner().getId())
-                        .collect(Collectors.toSet())
-        );
-
-        validateJoinerList(joinerList);
+        List<InterviewPassResponseDto> result = new ArrayList<>();
+        List<Object[]> joinerAndCandidateList = candidateRepository.findAllJoinerAndCandidateByDocsAndInterview(Docs.PASS, Interview.PASS);
 
         if(track.equals("all")){
-            return joinerList.stream()
-                    .map(this::mapJoinerToResponse)
-                    .collect(Collectors.toList());
+            for (Object[] objects : joinerAndCandidateList) {
+                Joiner joiner = (Joiner) objects[0];
+                Candidate candidate = (Candidate) objects[1];
+                result.add(mapJoinerAndCandidateToResponse(joiner, candidate));
+            }
         }else {
-            // 특정 track에 해당하는 Joiner만 필터링하여 최종 결과 매핑
-            return joinerList.stream()
-                    .filter(joiner -> joiner.getTrack().equals(requestedTrack))
-                    .map(this::mapJoinerToResponse)
-                    .collect(Collectors.toList());
+            for (Object[] objects : joinerAndCandidateList) {
+                Joiner joiner = (Joiner) objects[0];
+                Candidate candidate = (Candidate) objects[1];
+
+                // 요청된 트랙과 joiner의 트랙이 일치하는 경우에만 결과를 추가
+                if (joiner.getTrack().equals(requestedTrack)) {
+                    InterviewPassResponseDto dto = mapJoinerAndCandidateToResponse(joiner, candidate);
+                    result.add(dto);
+                }
+            }
         }
+        return result;
+    }
+
+    private InterviewPassResponseDto mapJoinerAndCandidateToResponse(Joiner joiner, Candidate candidate){
+        return InterviewPassResponseDto.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .interviewTime(candidate.getInterviewTime())
+                .submissionTime(joiner.getCreatedAt().toString())
+                .build();
     }
 
     public String setInterviewTime(InterviewTimeRequest requestDto) {

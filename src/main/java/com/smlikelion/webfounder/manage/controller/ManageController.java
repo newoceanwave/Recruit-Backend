@@ -8,6 +8,7 @@ import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
+import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
 import com.smlikelion.webfounder.manage.service.ManageService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -100,10 +101,11 @@ public class ManageController {
     @Operation(summary = "면접 합격자 전체 조회")
     @GetMapping("/interview/result")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<DocsPassResponseDto>> interviewPassList(@RequestParam("track") String track){
+    public BaseResponse<List<InterviewPassResponseDto>> interviewPassList(@RequestParam("track") String track){
         return new BaseResponse<>(manageService.interviewPassList(track));
     }
-    @Operation(summary = "서류 합격자 면접 시간 관리")
+
+    @Operation(summary = "서류 합격자 면접 시간 등록")
     @PostMapping("/interviewtime")
 
     public BaseResponse<String> setInterviewTime(@RequestBody InterviewTimeRequest requestDto) {
@@ -130,6 +132,5 @@ public class ManageController {
             return new BaseResponse<>(ErrorCode.NOT_FOUND);
         }
     }
-
 
 }
