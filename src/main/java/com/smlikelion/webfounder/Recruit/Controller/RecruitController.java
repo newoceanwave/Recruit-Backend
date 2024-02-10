@@ -1,6 +1,8 @@
 package com.smlikelion.webfounder.Recruit.Controller;// Import statements
 
+import com.smlikelion.webfounder.Recruit.Dto.Request.MailRequestDto;
 import com.smlikelion.webfounder.Recruit.Dto.Request.RecruitmentRequest;
+import com.smlikelion.webfounder.Recruit.Dto.Response.MailResponseDto;
 import com.smlikelion.webfounder.Recruit.Dto.Response.RecruitmentResponse;
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
@@ -15,13 +17,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.midi.Track;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/recruit/docs")
+@RequestMapping("/api/recruit")
 @Slf4j
 public class RecruitController {
 
@@ -33,7 +33,7 @@ public class RecruitController {
 
 
     @Operation(summary = "트랙별 서류 작성하기")
-    @PostMapping
+    @PostMapping("/docs")
     public BaseResponse<RecruitmentResponse> submitRecruitment(
             @RequestParam("track") String track,
             @RequestBody @Valid RecruitmentRequest request,
@@ -53,7 +53,7 @@ public class RecruitController {
         }
     }
     @Operation(summary = "트랙별 서류 작성 페이지 조회하기")
-    @GetMapping("/{joinerId}")
+    @GetMapping("/docs/{joinerId}")
     public BaseResponse<RecruitmentResponse> getJoinerDetails(
             @PathVariable Long joinerId) {
         Joiner joiner = joinerRepository.findById(joinerId).orElse(null);
@@ -74,15 +74,26 @@ public class RecruitController {
         }
     }
 
-
     @Operation(summary = "트랙별 서류 결과 합격자 조회하기")
-    @PostMapping("/result")
-
-
+    @PostMapping("/docs/result")
     private void logValidationErrors(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<ObjectError> errors = bindingResult.getAllErrors();
             errors.forEach(error -> log.error("Validation error: {}", error.getDefaultMessage()));
         }
     }
+
+    @Operation(summary = "지원자 메일 제출")
+    @PostMapping("/mail")
+    private BaseResponse<String> mailSubmit(@RequestBody @Valid MailRequestDto requestDto){
+        return new BaseResponse<>(ErrorCode.CREATED,recruitService.mailSubmit(requestDto)+" 등록되었습니다.");
+    }
+
+    @Operation(summary = "지원자 메일 전체 조회")
+    @GetMapping("/mail")
+    private BaseResponse<List<String>> mailList(){
+        return new BaseResponse<>(recruitService.findAllmail());
+    }
+
+
 }

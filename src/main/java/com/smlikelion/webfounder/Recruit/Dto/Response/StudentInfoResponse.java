@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Getter
@@ -17,6 +18,7 @@ public class StudentInfoResponse {
     private String portfolio;
     private String track;
     private String phoneNumber;
+    private String email;
     private long studentId;
     private String major;
 
@@ -26,5 +28,10 @@ public class StudentInfoResponse {
     private String programmers;
     private String programmersImg;
     private Candidate candidate;
+
+    private boolean agreeToTerms;
+    private boolean agreeToEventParticipation;
+
+
 
 }

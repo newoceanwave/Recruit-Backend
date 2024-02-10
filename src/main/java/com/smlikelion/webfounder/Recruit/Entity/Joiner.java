@@ -35,6 +35,9 @@ public class Joiner extends DateEntity {
     @Column(name = "phone_num", nullable = false)
     private String phoneNum;
 
+    @Column(name = "email", nullable = false)
+    private String email;
+
     @Column(name = "student_id", nullable = false)
     private String studentId;
 
@@ -85,6 +88,15 @@ public class Joiner extends DateEntity {
     @Column(name = "graduated_year", nullable = false)
     private String graduatedYear;
 
+    @Column(name = "agree_Terms", nullable = false)
+
+    private boolean agreeToTerms;
+
+    @Column(name = "agree_EventParticipation", nullable = false)
+
+    private boolean agreeToEventParticipation;
+
+
     public void setProgrammers(Programmers programmers) {
         this.programmers = programmers;
     }
@@ -95,6 +107,7 @@ public class Joiner extends DateEntity {
                 .name(this.name)
                 .track(this.track != null ? this.track.getTrackName() : null)
                 .phoneNumber(this.phoneNum)
+                .email(this.email)
                 .studentId(Long.parseLong(this.studentId))
                 .major(this.major)
                 .portfolio(this.portfolio)
@@ -104,6 +117,8 @@ public class Joiner extends DateEntity {
                 .programmers(this.programmers != null ? this.programmers.name() : Programmers.NOT_ENROLLED.name()) // 열거형에서 문자열 표현으로 변환
                 .programmersImg(this.programmersImageUrl)
                 .graduatedYear(this.graduatedYear)
+                .agreeToTerms(this.isAgreeToTerms()) // 개인정보 동의 여부 설정
+                .agreeToEventParticipation(this.isAgreeToEventParticipation()) // 행사 필수참여 동의 여부 설정
                 .build();
     }
 

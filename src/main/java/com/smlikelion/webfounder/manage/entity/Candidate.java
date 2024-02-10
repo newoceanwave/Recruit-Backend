@@ -28,6 +28,9 @@ public class Candidate extends DateEntity {
     @Enumerated(EnumType.ORDINAL)
     private Interview interview;
 
+    @Column(name = "interview_time")
+    private String interviewTime;
+
     @JoinColumn(name = "joiner_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Joiner joiner;
@@ -37,6 +40,7 @@ public class Candidate extends DateEntity {
         this.joiner=joiner;
         this.docs= Docs.valueOf(docs);
         this.interview= Interview.valueOf(interview);
+
     }
 }
 

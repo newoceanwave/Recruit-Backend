@@ -5,6 +5,7 @@ import com.smlikelion.webfounder.Recruit.Entity.Track;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
@@ -338,6 +339,20 @@ public class ManageService {
                 .interviewTime(candidate.getInterviewTime())
                 .submissionTime(joiner.getCreatedAt().toString())
                 .build();
+    }
+
+    public String setInterviewTime(InterviewTimeRequest requestDto) {
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId())
+                .orElseThrow(() -> new NotFoundJoinerException("해당 ID의 Joiner를 찾을 수 없습니다."));
+
+        Candidate candidate = candidateRepository.findByJoiner(joiner)
+                .orElseThrow(() -> new NotFoundCandidateException("해당 Joiner에 대한 Candidate를 찾을 수 없습니다."));
+
+        candidate.setInterviewTime(requestDto.getInterviewDate() + " " + requestDto.getInterviewTime());
+
+        candidateRepository.save(candidate);
+
+        return "면접 시간이 성공적으로 설정되었습니다.";
     }
 
 }

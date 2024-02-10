@@ -1,8 +1,11 @@
 package com.smlikelion.webfounder.manage.controller;
 
+import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
+import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
@@ -11,9 +14,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.smlikelion.webfounder.Recruit.Entity.Joiner;
+
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/manage")
@@ -21,6 +27,7 @@ import java.util.List;
 public class ManageController {
 
     private final ManageService manageService;
+    private final JoinerRepository joinerRepository;
 
     @Operation(summary = "서류 질문 등록하기")
     @PostMapping("/docs/quest")
