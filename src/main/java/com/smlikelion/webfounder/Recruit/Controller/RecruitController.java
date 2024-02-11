@@ -64,7 +64,7 @@ public class RecruitController {
                     .id(joiner.getId())
                     .studentInfo(joiner.toStudentInfoResponse())
                     .answerList(joiner.toAnswerListResponse())
-                    .interviewTime(joiner.getInterviewTime().keySet()) // 필요에 따라 수정
+                    .interviewTime(joiner.getInterviewTimeValues()) // 필요에 따라 수정
                     .build();
 
             return new BaseResponse<>(recruitResponse);
