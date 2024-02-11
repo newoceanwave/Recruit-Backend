@@ -12,10 +12,7 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Entity
@@ -101,6 +98,9 @@ public class Joiner extends DateEntity {
         this.programmers = programmers;
     }
 
+    public Set<String> getInterviewTimeValues() {
+        return new HashSet<>(this.interviewTime.values());
+    }
 
     public StudentInfoResponse toStudentInfoResponse() {
         return StudentInfoResponse.builder()
