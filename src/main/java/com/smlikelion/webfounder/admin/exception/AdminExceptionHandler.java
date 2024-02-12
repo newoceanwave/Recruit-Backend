@@ -2,9 +2,10 @@ package com.smlikelion.webfounder.admin.exception;
 
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
-import com.smlikelion.webfounder.security.exception.InvalidTokenException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +44,7 @@ public class AdminExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedRoleException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public BaseResponse<?> handleUnauthorizedRoleException(UnauthorizedRoleException e, HttpServletRequest request) {
         log.warn("ADMIN-006> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
         return new BaseResponse<>(ErrorCode.UNAUTHORIZED_ROLE_ERROR);
