@@ -28,6 +28,7 @@ public enum ErrorCode {
     USERNAME_EXISTS_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
     UNAUTHORIZED_ERROR(false, HttpStatus.UNAUTHORIZED.value(), "로그인을 하지 않았습니다"),
     FORBIDDEN_ERROR(false, HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
+    REFRESH_TOKEN_NOT_FOUND_ERROR(false, HttpStatus.BAD_REQUEST.value(), "RefreshToken 정보를 찾을 수 없습니다."),
 
     //admin
     ALREADY_EXISTS_ACCOUNT_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 아이디입니다."),

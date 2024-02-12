@@ -2,6 +2,7 @@ package com.smlikelion.webfounder.admin.exception;
 
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
+import com.smlikelion.webfounder.security.exception.InvalidTokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -45,6 +46,12 @@ public class AdminExceptionHandler {
     public BaseResponse<?> handleUnauthorizedRoleException(UnauthorizedRoleException e, HttpServletRequest request) {
         log.warn("ADMIN-006> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
         return new BaseResponse<>(ErrorCode.UNAUTHORIZED_ROLE_ERROR);
+    }
+
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    public BaseResponse<?> handleInvalidTokenException(RefreshTokenNotFoundException e, HttpServletRequest request) {
+        log.warn("ADMIN-007> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.REFRESH_TOKEN_NOT_FOUND_ERROR);
     }
 
 }

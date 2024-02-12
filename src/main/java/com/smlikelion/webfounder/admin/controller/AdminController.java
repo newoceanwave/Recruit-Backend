@@ -3,6 +3,7 @@ package com.smlikelion.webfounder.admin.controller;
 import com.smlikelion.webfounder.admin.dto.request.SignInRequest;
 import com.smlikelion.webfounder.admin.dto.request.SignUpRequest;
 import com.smlikelion.webfounder.admin.dto.request.UpdateRoleRequest;
+import com.smlikelion.webfounder.admin.dto.response.ReissueResponse;
 import com.smlikelion.webfounder.admin.dto.response.SignInResponse;
 import com.smlikelion.webfounder.admin.dto.response.SignUpResponse;
 import com.smlikelion.webfounder.admin.dto.response.UpdateRoleResponse;
@@ -59,13 +60,18 @@ public class AdminController {
        return new BaseResponse<>(adminService.checkTokenValidation(refreshToken));
     }
 
-    /*
-    @Operation(summary="관리자 로그아웃")
-    @PostMapping("/signout")
+    @Operation(summary="액세스 토큰 재발급")
+    @PostMapping("/reissue")
+    public BaseResponse<ReissueResponse> reissue(@Auth AuthInfo authInfo) {
+        return new BaseResponse<>(adminService.reissue(authInfo.getAccountId(), authInfo.getToken()));
+    }
+    
+    @Operation(summary="로그아웃")
+    @PostMapping("/logout")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<String> signOut() {
+    public BaseResponse<String> logOut(@Auth AuthInfo authInfo) {
+        adminService.logOut(authInfo.getAccountId());
         return new BaseResponse<>("로그아웃 성공");
     }
-     */
 
 }

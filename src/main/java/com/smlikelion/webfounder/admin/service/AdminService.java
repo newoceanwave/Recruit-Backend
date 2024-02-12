@@ -3,6 +3,7 @@ package com.smlikelion.webfounder.admin.service;
 import com.smlikelion.webfounder.admin.dto.request.SignInRequest;
 import com.smlikelion.webfounder.admin.dto.request.SignUpRequest;
 import com.smlikelion.webfounder.admin.dto.request.UpdateRoleRequest;
+import com.smlikelion.webfounder.admin.dto.response.ReissueResponse;
 import com.smlikelion.webfounder.admin.dto.response.SignInResponse;
 import com.smlikelion.webfounder.admin.dto.response.SignUpResponse;
 import com.smlikelion.webfounder.admin.dto.response.UpdateRoleResponse;
@@ -132,6 +133,36 @@ public class AdminService {
         return mapAdminToSignInResponse(admin);
     }
 
+    @Transactional
+    public void logOut(String accountId) {
+        Admin admin = adminRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
+        admin.updateRefreshToken(null);
+    }
+
+    @Transactional
+    public ReissueResponse reissue(String accountId, String refreshToken) {
+        log.info("Reissuing tokens for accountId: {}", accountId);
+
+        Admin admin = adminRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
+
+        if(!admin.getRefreshToken().equals(refreshToken)) {
+            throw new RefreshTokenNotFoundException("리프레쉬 토큰에서 유저정보를 찾을 수 없습니다.");
+        }
+        tokenProvider.validateToken(tokenProvider.resolveToken(refreshToken));
+
+        TokenInfo newAccessToken = tokenProvider.createAccessToken(admin.getAccountId(), admin.getRole());
+        TokenInfo newRefreshToken = tokenProvider.createRefreshToken(admin.getAccountId(), admin.getRole());
+
+        admin.updateRefreshToken(newRefreshToken.getToken());
+
+        return ReissueResponse.builder()
+                .accessToken(newAccessToken.getToken())
+                .refreshToken(newRefreshToken.getToken())
+                .build();
+    }
+
     public Boolean checkTokenValidation(String refreshToken) {
         String jwtToken = tokenProvider.resolveToken(refreshToken);
         if (jwtToken != null && tokenProvider.validateToken(jwtToken)) {
@@ -142,6 +173,8 @@ public class AdminService {
             throw new InvalidTokenException("토큰이 존재하지 않습니다.");
         }
     }
+
+
 
     private SignUpResponse mapAdminToSignUpResponse(Admin admin) {
         return SignUpResponse.builder()
