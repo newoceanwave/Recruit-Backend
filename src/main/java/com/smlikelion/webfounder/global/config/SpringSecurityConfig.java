@@ -103,7 +103,9 @@ public class SpringSecurityConfig {
                 "/swagger/**",
                 "/api/admin/check-token-validation",
                 "/api/admin/signin",
-                "/api/admin/signup"
+                "/api/admin/signup",
+                "/api/project/**",
+                "/api/recruit/**"
         );
     }
 }
