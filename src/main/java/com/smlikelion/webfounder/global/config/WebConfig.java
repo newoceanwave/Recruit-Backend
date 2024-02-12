@@ -22,5 +22,16 @@ public class WebConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(authArgumentResolver());
         WebMvcConfigurer.super.addArgumentResolvers(resolvers);
+      
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")  // 허용할 클라이언트 도메인
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .exposedHeaders("Authorization", "Content-Type")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
-}
+ }
+

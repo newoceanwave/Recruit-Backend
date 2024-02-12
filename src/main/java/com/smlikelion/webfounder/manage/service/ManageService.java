@@ -1,12 +1,22 @@
 package com.smlikelion.webfounder.manage.service;
 
+import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
 import com.smlikelion.webfounder.admin.entity.Role;
 import com.smlikelion.webfounder.admin.exception.UnauthorizedRoleException;
+import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
+import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
+import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
+import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
+import com.smlikelion.webfounder.manage.entity.Candidate;
+import com.smlikelion.webfounder.manage.entity.Docs;
+import com.smlikelion.webfounder.manage.entity.Interview;
 import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
+import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
 import com.smlikelion.webfounder.security.AuthInfo;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +35,8 @@ import java.util.stream.Collectors;
 public class ManageService {
 
     private final QuestionRepository questionRepository;
+    private final CandidateRepository candidateRepository;
+    private final JoinerRepository joinerRepository;
 
     public DocsQuestResponse registerQuestion(AuthInfo authInfo, DocsQuestRequest request) {
         if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
@@ -146,6 +159,224 @@ public class ManageService {
         if (questionList.isEmpty()) {
             throw new NotFoundQuestionException("해당 년도 해당 트랙의 문항이 존재하지 않습니다.");
         }
+    }
+
+    public List<Long> docsPass(DocsInterPassRequestDto requestDto){
+        List<Long> passedJoinerIds = new ArrayList<>();
+
+        // 요청 데이터가 하나라도 유효하지 않다면 에러 발생
+        for (Long joinerId : requestDto.getJoinerIds()) {
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+        }
+
+        for(Long joinerId : requestDto.getJoinerIds()){
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+            candidate.setDocs(Docs.PASS);
+            candidateRepository.save(candidate);
+            passedJoinerIds.add(joinerId);
+        }
+
+        return passedJoinerIds;
+    }
+
+    public List<Long> docsFail(DocsInterPassRequestDto requestDto){
+        List<Long> failedJoinerIds = new ArrayList<>();
+
+        // 요청 데이터가 하나라도 유효하지 않다면 에러 발생
+        for (Long joinerId : requestDto.getJoinerIds()) {
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+        }
+
+        for(Long joinerId : requestDto.getJoinerIds()){
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+            candidate.setDocs(Docs.REJECT);
+            candidateRepository.save(candidate);
+            failedJoinerIds.add(joinerId);
+        }
+
+        return failedJoinerIds;
+    }
+
+    public List<Long> interviewPass(DocsInterPassRequestDto requestDto){
+        List<Long> passedJoinerIds = new ArrayList<>();
+
+        // 요청 데이터가 하나라도 유효하지 않다면 에러 발생
+        for (Long joinerId : requestDto.getJoinerIds()) {
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+
+            // 요청 데이터에 서류 불합격자가 있다면 에러 발생
+            validateInterviewPassJoiner(candidate);
+        }
+
+        for (Long joinerId : requestDto.getJoinerIds()) {
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+
+            candidate.setInterview(Interview.PASS);
+            candidateRepository.save(candidate);
+            passedJoinerIds.add(joinerId);
+        }
+
+        return passedJoinerIds;
+    }
+
+    private void validateInterviewPassJoiner(Candidate candidate) {
+        if(candidate.getDocs().equals(Docs.REJECT)){
+            throw new InvalidInterviewPassException(candidate.getJoiner().getId()+"번 지원자는 서류 불합격자 입니다.");
+        }
+    }
+
+    public List<Long> interviewFail(DocsInterPassRequestDto requestDto){
+        List<Long> failedJoinerIds = new ArrayList<>();
+
+        // 요청 데이터가 하나라도 유효하지 않다면 에러 발생
+        for (Long joinerId : requestDto.getJoinerIds()) {
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+        }
+
+        for(Long joinerId : requestDto.getJoinerIds()){
+            Joiner joiner = joinerRepository.findById(joinerId).orElseThrow(
+                    () -> new NotFoundJoinerException(joinerId+"번 joiner는 존재하지 않습니다")
+            );
+            Candidate candidate = candidateRepository.findByJoiner(joiner).orElseThrow(
+                    () -> new NotFoundCandidateException(joinerId+"번 candidate는 존재하지 않습니다")
+            );
+            candidate.setInterview(Interview.REJECT);
+            candidateRepository.save(candidate);
+            failedJoinerIds.add(joinerId);
+        }
+
+        return failedJoinerIds;
+    }
+
+    public List<DocsPassResponseDto> docsPassList(String track){
+        Track requestedTrack = validateTrackName(track);
+
+        // Candidate 테이블에서 Docs 값이 PASS인 candidateList 추출
+        List<Joiner> joinerList = joinerRepository.findAllById(
+                candidateRepository.findAllByDocs(Docs.PASS).stream()
+                        .map(candidate -> candidate.getJoiner().getId())
+                        .collect(Collectors.toSet())
+        );
+
+        validateJoinerList(joinerList);
+
+        if(track.equals("all")){
+            return joinerList.stream()
+                    .map(this::mapJoinerToResponse)
+                    .collect(Collectors.toList());
+        }else {
+            // 특정 track에 해당하는 Joiner만 필터링하여 최종 결과 매핑
+            return joinerList.stream()
+                    .filter(joiner -> joiner.getTrack().equals(requestedTrack))
+                    .map(this::mapJoinerToResponse)
+                    .collect(Collectors.toList());
+        }
+
+    }
+
+    private void validateJoinerList(List<Joiner> joinerList){
+        if(joinerList.isEmpty()){
+            throw new NotFoundJoinerException("해당 트랙에 합격한 지원자가 존재하지 않습니다.");
+        }
+    }
+
+    private DocsPassResponseDto mapJoinerToResponse(Joiner joiner){
+        return DocsPassResponseDto.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .submissionTime(joiner.getCreatedAt().toString())
+                .build();
+    }
+
+    public List<InterviewPassResponseDto> interviewPassList(String track){
+        Track requestedTrack = validateTrackName(track);
+
+        List<InterviewPassResponseDto> result = new ArrayList<>();
+        List<Object[]> joinerAndCandidateList = candidateRepository.findAllJoinerAndCandidateByDocsAndInterview(Docs.PASS, Interview.PASS);
+
+        if(track.equals("all")){
+            for (Object[] objects : joinerAndCandidateList) {
+                Joiner joiner = (Joiner) objects[0];
+                Candidate candidate = (Candidate) objects[1];
+                result.add(mapJoinerAndCandidateToResponse(joiner, candidate));
+            }
+        }else {
+            for (Object[] objects : joinerAndCandidateList) {
+                Joiner joiner = (Joiner) objects[0];
+                Candidate candidate = (Candidate) objects[1];
+
+                // 요청된 트랙과 joiner의 트랙이 일치하는 경우에만 결과를 추가
+                if (joiner.getTrack().equals(requestedTrack)) {
+                    InterviewPassResponseDto dto = mapJoinerAndCandidateToResponse(joiner, candidate);
+                    result.add(dto);
+                }
+            }
+        }
+        return result;
+    }
+
+    private InterviewPassResponseDto mapJoinerAndCandidateToResponse(Joiner joiner, Candidate candidate){
+        return InterviewPassResponseDto.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .interviewTime(candidate.getInterviewTime())
+                .submissionTime(joiner.getCreatedAt().toString())
+                .build();
+    }
+
+    public String setInterviewTime(InterviewTimeRequest requestDto) {
+        Joiner joiner = joinerRepository.findById(requestDto.getJoinerId())
+                .orElseThrow(() -> new NotFoundJoinerException("해당 ID의 Joiner를 찾을 수 없습니다."));
+
+        Candidate candidate = candidateRepository.findByJoiner(joiner)
+                .orElseThrow(() -> new NotFoundCandidateException("해당 Joiner에 대한 Candidate를 찾을 수 없습니다."));
+
+        candidate.setInterviewTime(requestDto.getInterviewDate() + " " + requestDto.getInterviewTime());
+
+        candidateRepository.save(candidate);
+
+        return "면접 시간이 성공적으로 설정되었습니다.";
     }
 
 }
