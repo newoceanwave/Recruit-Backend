@@ -7,6 +7,7 @@ import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestUpdateRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
+import com.smlikelion.webfounder.manage.dto.response.ApplicationStatusResponse;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
@@ -15,6 +16,8 @@ import com.smlikelion.webfounder.security.Auth;
 import com.smlikelion.webfounder.security.AuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
@@ -147,6 +150,21 @@ public class ManageController {
             // Joiner를 찾지 못한 경우, 오류 응답 반환
             return new BaseResponse<>(ErrorCode.NOT_FOUND);
         }
+    }
+
+    @Operation(summary = "지원현황 및 지원서류 조회하기")
+    @GetMapping("/apply")
+    public BaseResponse<ApplicationStatusResponse> getApplicationStatus(
+            @Auth AuthInfo authInfo,
+            @RequestParam("track") String track,
+            @RequestParam(value="page", required = false, defaultValue = "0") int page,
+            @RequestParam(value="size", required = false, defaultValue = "10") int size) {
+        if( page < 0 || size <= 0) {
+            page = 0;
+            size = 10;
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return new BaseResponse<>(manageService.getApplicationStatus(authInfo, track, pageable));
     }
 
 }
