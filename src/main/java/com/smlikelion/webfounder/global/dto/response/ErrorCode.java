@@ -36,9 +36,10 @@ public enum ErrorCode {
     NOT_FOUND_ADMIN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "해당 관리자ID를 찾을 수 없습니다."),
     UNSUPPORTED_ROLE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 역할입니다."),
     INVALID_PASSWORD_ERROR(false, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
-    UNAUTHORIZED_ROLE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "권한이 없습니다."),
+    UNAUTHORIZED_ROLE_ERROR(false, HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
     INVALID_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 토큰입니다."),
     EMPTY_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "토큰이 비어있습니다."),
+    EXPIRED_TOKEN_ERROR(false, HttpStatus.UNAUTHORIZED.value(), "만료된 토큰입니다."),
 
     //manage
     UNSUPPORTED_TRACK_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 트랙입니다."),
