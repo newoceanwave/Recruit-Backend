@@ -1,8 +1,6 @@
 package com.smlikelion.webfounder.global.config;
 
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smlikelion.webfounder.admin.entity.Role;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import com.smlikelion.webfounder.security.ExceptionHandleFilter;
@@ -58,7 +56,8 @@ public class SpringSecurityConfig {
                 exceptionConfig
                         .authenticationEntryPoint(unauthorizedEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler);
-            });
+            })
+            .cors();
 
         return httpSecurity.build();
     }
