@@ -5,10 +5,10 @@ import com.smlikelion.webfounder.security.exception.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,12 +16,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import javax.naming.AuthenticationException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
     private final long ACCESS_TOKEN_VALID_TIME = 1000L * 60 * 60 * 24 * 7; // 7일
@@ -42,7 +44,7 @@ public class JwtTokenProvider {
 
     //토큰 유효성 검사
     public Boolean validateToken(String token) {
-        System.out.println("validateToken is invoked!");
+        log.info("validateToken method is invoked!");
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(baseSecretKey));
         try {
             Jwts.parserBuilder()
@@ -50,43 +52,28 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (SecurityException e) {
-            throw new InvalidTokenException("Jwt Security error");
+            throw new InvalidTokenException("SecurityException - Jwt 토큰을 파싱하는 동안 문제가 발생했습니다.");
         } catch (MalformedJwtException e) {
-            throw new InvalidTokenException("MalformedJwtException - 잘못된 Jwt Token");
+            throw new InvalidTokenException("MalformedJwtException - Jwt 토큰의 형식이 잘못되었습니다.");
         } catch (ExpiredJwtException e) {
-            throw new InvalidTokenException("ExpiredJwtException - 만료된 Jwt Token");
+            throw new InvalidTokenException("ExpiredJwtException - 만료된 Jwt 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            throw new InvalidTokenException("UnsupportedJwtException - 지원하지 않는 Jwt Token");
+            throw new InvalidTokenException("UnsupportedJwtException - 지원하지 않는 Jwt 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            throw new InvalidTokenException("IllegalArgumentException - 잘못된 헤더");
+            throw new InvalidTokenException("IllegalArgumentException - 잘못된 헤더가 사용되었습니다.");
         } catch (io.jsonwebtoken.security.SignatureException e) {
-            throw new InvalidTokenException("SignatureException - 잘못된 Token 형식");
+            throw new InvalidTokenException("SignatureException - Jwt 토큰의 서명이 잘못되었습니다.");
         }
     }
 
-    public Authentication getAuthentication(String token) {
-//        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(baseSecretKey));
-//
-//        Claims claims = Jwts.parserBuilder()
-//                .setSigningKey(secretKey)
-//                .build()
-//                .parseClaimsJws(token)
-//                .getBody();
-//
-//        String accountId = claims.get("accountId", String.class);
-//        Role role = claims.get("role", Role.class);
-//
-//        List<GrantedAuthority> authorities = extractAuthoritiesFromRole(role);
-//
-//        return new UsernamePasswordAuthenticationToken(accountId, null, authorities);
-        System.out.println("getAuthentication is invoked!");
+    public Authentication getAuthentication(String token) { //유효성 검증한 token이 들어옴
+        log.info("getAuthentication method is invoked!");
         Claims claims = parseClaims(token);
         try {
             claims.get("accountId");
-        } catch(Exception e) {
+        } catch (Exception e) {
             try {
-                //throw new AuthenticationException("Jwt 토큰에 accountId가 존재하지 않습니다.");
-                System.out.println("Jwt 토큰에 accountId가 존재하지 않습니다.");
+                throw new AuthenticationException("Jwt 토큰에 accountId가 존재하지 않습니다.");
             } catch (AuthenticationException ex) {
                 ex.printStackTrace();
             }
@@ -95,9 +82,8 @@ public class JwtTokenProvider {
                 Arrays.stream(claims.get("ROLE_").toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-        System.out.println("authorities = " + authorities);
+        log.info("getAuthentication method - " + "accountId: "+ claims.get("accountId").toString() + ", authorities: " + authorities);
         UserDetails userDetails = new User(claims.get("accountId").toString(), "", authorities);
-        //UserDetails userDetails = userDetailsService.loadUserByUsername(claims.get("accountId").toString());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -123,6 +109,11 @@ public class JwtTokenProvider {
         return null;
     }
 
+    private Claims parseClaims(String token) {
+        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(baseSecretKey));
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+    }
+
     public String getAccountId(String token) {
         Claims claims = parseClaims(token);
         return claims.get("accountId").toString();
@@ -133,10 +124,7 @@ public class JwtTokenProvider {
         return claims.get("role").toString();
     }
 
-    private Claims parseClaims(String token) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(baseSecretKey));
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
-    }
+
 
     //jwt 토큰 생성
     private TokenInfo createToken(String accountId, Role role, long validTime) {
@@ -154,5 +142,9 @@ public class JwtTokenProvider {
 
         token = BEARER_TYPE + token;
         return new TokenInfo(token, expiration.getTime()-now.getTime());
+    }
+
+    public String getSubject(String token) {
+        return Jwts.parser().setSigningKey(baseSecretKey).parseClaimsJws(token).getBody().getSubject();
     }
 }

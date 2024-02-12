@@ -14,6 +14,7 @@ import com.smlikelion.webfounder.admin.repository.AdminRepository;
 import com.smlikelion.webfounder.security.AuthInfo;
 import com.smlikelion.webfounder.security.JwtTokenProvider;
 import com.smlikelion.webfounder.security.TokenInfo;
+import com.smlikelion.webfounder.security.exception.InvalidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -73,16 +74,13 @@ public class AdminService {
 //   }
 
     @Transactional
-    public UpdateRoleResponse updateRoles(UpdateRoleRequest request) {
-//        System.out.println("아이디: " + authInfo.getAccountId());
-//        System.out.println("역할: " + authInfo.getRoles().get(0));
-//        if(!authInfo.getRoles().get(0).equals(Role.SUPERUSER)) {
-//            throw new UnauthorizedRoleException("권한이 없습니다.");
-//        }
+    public UpdateRoleResponse updateRoles(AuthInfo authInfo, UpdateRoleRequest request) {
+        if(!authInfo.getRoles().get(0).equals(Role.SUPERUSER)) {
+            throw new UnauthorizedRoleException("권한이 없습니다.");
+        }
+
         Admin admin = adminRepository.findByAdminIdAndAccountId(request.getId(), request.getAccountId())
                 .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
-
-        System.out.println("역할: " + request.getRole());
         if(request.getRole().toUpperCase().equals(Role.MANAGER.name())) {
             admin.setRole(Role.MANAGER);
             adminRepository.save(admin);
@@ -130,8 +128,19 @@ public class AdminService {
         TokenInfo accessToken = tokenProvider.createAccessToken(admin.getAccountId(), admin.getRole());
         TokenInfo refreshToken = tokenProvider.createRefreshToken(admin.getAccountId(), admin.getRole());
         admin.updateRefreshToken(refreshToken.getToken());
-        System.out.println("accessToken: " + accessToken.getToken());
+        log.info("accessToken: " + accessToken.getToken());
         return mapAdminToSignInResponse(admin);
+    }
+
+    public Boolean checkTokenValidation(String refreshToken) {
+        String jwtToken = tokenProvider.resolveToken(refreshToken);
+        if (jwtToken != null && tokenProvider.validateToken(jwtToken)) {
+            log.info("토큰 유효성 검증 성공");
+            return true;
+        }
+        else {
+            throw new InvalidTokenException("토큰이 존재하지 않습니다.");
+        }
     }
 
     private SignUpResponse mapAdminToSignUpResponse(Admin admin) {

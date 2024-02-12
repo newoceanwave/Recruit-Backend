@@ -1,5 +1,6 @@
 package com.smlikelion.webfounder.global.config;
 
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smlikelion.webfounder.admin.entity.Role;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
@@ -48,18 +49,18 @@ public class SpringSecurityConfig {
             .authorizeRequests(authorize ->
                     authorize
                             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                            .antMatchers("/api/admin/**", "/api/project/**").permitAll()
+                            .antMatchers("/api/project/**").permitAll()
                             .antMatchers("/api/manage/**").hasRole(Role.MANAGER.name())
                             .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // CORS
                             .anyRequest().authenticated()
             )
             .addFilterAfter(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class);
-//            .exceptionHandling((exceptionConfig) -> {
-//                exceptionConfig
-//                        .authenticationEntryPoint(unauthorizedEntryPoint)
-//                        .accessDeniedHandler(accessDeniedHandler);
-//            });
+            .addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class)
+            .exceptionHandling((exceptionConfig) -> {
+                exceptionConfig
+                        .authenticationEntryPoint(unauthorizedEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler);
+            });
 
         return httpSecurity.build();
     }
@@ -82,6 +83,7 @@ public class SpringSecurityConfig {
                 String json = new ObjectMapper().writeValueAsString(fail);
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 PrintWriter writer = response.getWriter();
+                System.out.println(json);
                 writer.write(json);
                 writer.flush();
             };
@@ -94,14 +96,16 @@ public class SpringSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().antMatchers(
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/swagger/**",
-            "/swagger-ui.html",
-            "/swagger-resources/**",
-            "/webjars/**",
-            "/swagger/**",
-            "/api/admin/**"
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger/**",
+                "/swagger-ui.html",
+                "/swagger-resources/**",
+                "/webjars/**",
+                "/swagger/**",
+                "/api/admin/check-token-validation",
+                "/api/admin/signin",
+                "/api/admin/signup"
         );
     }
 }

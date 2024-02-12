@@ -36,6 +36,8 @@ public enum ErrorCode {
     UNSUPPORTED_ROLE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 역할입니다."),
     INVALID_PASSWORD_ERROR(false, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
     UNAUTHORIZED_ROLE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "권한이 없습니다."),
+    INVALID_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 토큰입니다."),
+    EMPTY_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "토큰이 비어있습니다."),
 
     //manage
     UNSUPPORTED_TRACK_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 트랙입니다."),

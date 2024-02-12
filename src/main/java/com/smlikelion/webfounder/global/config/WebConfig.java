@@ -20,7 +20,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        System.out.println("WebConfig is invoked!");
         resolvers.add(authArgumentResolver());
         WebMvcConfigurer.super.addArgumentResolvers(resolvers);
     }

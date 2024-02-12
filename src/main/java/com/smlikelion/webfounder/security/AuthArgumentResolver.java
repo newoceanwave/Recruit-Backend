@@ -2,7 +2,6 @@ package com.smlikelion.webfounder.security;
 
 import com.smlikelion.webfounder.admin.entity.Role;
 import org.springframework.core.MethodParameter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,9 +28,7 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
             ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) {
-        System.out.println("AuthArgumentResolver is invoked!");
         UserDetails authentication = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("authentication.getUsername() = " + authentication.getUsername());
         return new AuthInfo(
                 webRequest.getHeader(AUTHORIZATION_HEADER),
                 authentication.getUsername(),
