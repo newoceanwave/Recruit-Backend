@@ -105,8 +105,7 @@ public class AdminService {
         TokenInfo accessToken = tokenProvider.createAccessToken(admin.getAccountId(), admin.getRole());
         TokenInfo refreshToken = tokenProvider.createRefreshToken(admin.getAccountId(), admin.getRole());
         admin.updateRefreshToken(refreshToken.getToken());
-        log.info("accessToken: " + accessToken.getToken());
-        return mapAdminToSignInResponse(admin);
+        return mapAdminToSignInResponse(admin, accessToken.getToken());
     }
 
     @Transactional
@@ -159,12 +158,13 @@ public class AdminService {
                 .name(admin.getName())
                 .build();
     }
-    private SignInResponse mapAdminToSignInResponse(Admin admin) {
+    private SignInResponse mapAdminToSignInResponse(Admin admin, String accessToken) {
         return SignInResponse.builder()
                 .id(admin.getAdminId())
                 .accountId(admin.getAccountId())
                 .role(admin.getRole().toString())
-                .token(admin.getRefreshToken())
+                .accessToken(accessToken)
+                .refreshToken(admin.getRefreshToken())
                 .build();
     }
     private UpdateRoleResponse mapAdminToUpdateRoleResponse(Admin admin) {

@@ -11,5 +11,6 @@ public class SignInResponse {
     private Long id;
     private String accountId;
     private String role;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 }
