@@ -26,8 +26,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'org.testng:testng:7.1.0'
-  compileOnly 'org.projectlombok:lombok'
+	implementation 'org.testng:testng:7.1.0'
+	compileOnly 'org.projectlombok:lombok'
 	implementation 'org.jetbrains:annotations:24.0.0'
 
 	runtimeOnly 'com.h2database:h2'
