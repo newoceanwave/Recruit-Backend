@@ -65,7 +65,7 @@ public class AdminController {
     public BaseResponse<ReissueResponse> reissue(@Auth AuthInfo authInfo) {
         return new BaseResponse<>(adminService.reissue(authInfo.getAccountId(), authInfo.getToken()));
     }
-    
+
     @Operation(summary="로그아웃")
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.OK)

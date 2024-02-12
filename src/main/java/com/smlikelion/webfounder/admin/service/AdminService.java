@@ -50,30 +50,6 @@ public class AdminService {
        log.info("SuperUser created: {}", admin);
    }
 
-//   @Transactional
-//   public UpdateRoleResponse updateRoles(AuthInfo authInfo, UpdateRoleRequest request) {
-//       System.out.println("아이디: " + authInfo.getAccountId());
-//       System.out.println("역할: " + authInfo.getRoles().get(0));
-//       if(!authInfo.getRoles().get(0).equals(Role.SUPERUSER)) {
-//           throw new UnauthorizedRoleException("권한이 없습니다.");
-//       }
-//       Admin admin = adminRepository.findByAdminIdAndAccountId(request.getId(), request.getAccountId())
-//               .orElseThrow(() -> new NotFoundAdminException("해당하는 아이디가 없습니다."));
-//
-//       System.out.println("역할: " + request.getRole());
-//       if(request.getRole().toUpperCase().equals(Role.MANAGER.name())) {
-//           admin.setRole(Role.MANAGER);
-//           adminRepository.save(admin);
-//       } else if(request.getRole().toUpperCase().equals(Role.USER.name())) {
-//           admin.setRole(Role.USER);
-//           adminRepository.save(admin);
-//       } else {
-//           throw new UnsupportedRoleException("해당하는 역할이 없습니다.");
-//       }
-//
-//       return mapAdminToUpdateRoleResponse(admin);
-//   }
-
     @Transactional
     public UpdateRoleResponse updateRoles(AuthInfo authInfo, UpdateRoleRequest request) {
         if(!authInfo.getRoles().get(0).equals(Role.SUPERUSER)) {

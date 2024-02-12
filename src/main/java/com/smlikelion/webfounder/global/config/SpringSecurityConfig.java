@@ -49,8 +49,6 @@ public class SpringSecurityConfig {
             .authorizeRequests(authorize ->
                     authorize
                             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                            .antMatchers("/api/project/**").permitAll()
-                            .antMatchers("/api/manage/**").hasRole(Role.MANAGER.name())
                             .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // CORS
                             .anyRequest().authenticated()
             )

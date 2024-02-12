@@ -4,6 +4,8 @@ import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.service.ManageService;
+import com.smlikelion.webfounder.security.Auth;
+import com.smlikelion.webfounder.security.AuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,33 +25,37 @@ public class ManageController {
     @PostMapping("/docs/quest")
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<DocsQuestResponse> registerQuestion(
+            @Auth AuthInfo authInfo,
             @RequestBody @Valid DocsQuestRequest request) {
-        return new BaseResponse<>(manageService.registerQuestion(request));
+        return new BaseResponse<>(manageService.registerQuestion(authInfo, request));
     }
 
     @Operation(summary = "서류 문항 조회하기")
     @GetMapping("/docs/quest")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<DocsQuestResponse>> retrieveQuestionByYearAndTrack(
+            @Auth AuthInfo authInfo,
             @RequestParam("year") Long year,
             @RequestParam("track") String track) {
-        return new BaseResponse<>(manageService.retrieveQuestionByYearAndTrack(year, track));
+        return new BaseResponse<>(manageService.retrieveQuestionByYearAndTrack(authInfo, year, track));
     }
 
     @Operation(summary = "서류 질문 삭제하기")
     @DeleteMapping("/docs/quest/{id}")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<DocsQuestResponse> deleteQuestion(
+            @Auth AuthInfo authInfo,
             @PathVariable("id") Long id) {
-        return new BaseResponse<>(manageService.deleteQuestion(id));
+        return new BaseResponse<>(manageService.deleteQuestion(authInfo, id));
     }
 
     @Operation(summary = "서류 질문 수정하기")
     @PutMapping("/docs/quest/{id}")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<DocsQuestResponse> updateQuestion(
+            @Auth AuthInfo authInfo,
             @PathVariable("id") Long id,
             @RequestBody @Valid DocsQuestRequest request) {
-        return new BaseResponse<>(manageService.updateQuestion(id, request));
+        return new BaseResponse<>(manageService.updateQuestion(authInfo, id, request));
     }
 }
