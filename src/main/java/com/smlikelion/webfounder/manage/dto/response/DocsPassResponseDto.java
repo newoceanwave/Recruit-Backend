@@ -14,5 +14,6 @@ public class DocsPassResponseDto {
     private String phoneNum;
     private String studentID;
     private String track;
+    private String interviewTime;
     private String submissionTime;
 }
