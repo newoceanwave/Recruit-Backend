@@ -7,6 +7,7 @@ import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestUpdateRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
+import com.smlikelion.webfounder.manage.dto.response.ApplicationStatusResponse;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
@@ -147,6 +148,14 @@ public class ManageController {
             // Joiner를 찾지 못한 경우, 오류 응답 반환
             return new BaseResponse<>(ErrorCode.NOT_FOUND);
         }
+    }
+
+    @Operation(summary = "지원현황 및 지원서류 조회하기")
+    @GetMapping("/apply")
+    public BaseResponse<ApplicationStatusResponse> getApplicationStatus(
+            @Auth AuthInfo authInfo,
+            @RequestParam("track") String track) {
+        return new BaseResponse<>(manageService.getApplicationStatus(authInfo, track));
     }
 
 }

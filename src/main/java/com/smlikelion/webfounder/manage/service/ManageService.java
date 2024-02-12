@@ -9,9 +9,7 @@ import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestUpdateRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
-import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
-import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
-import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
+import com.smlikelion.webfounder.manage.dto.response.*;
 import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.smlikelion.webfounder.manage.entity.Docs;
 import com.smlikelion.webfounder.manage.entity.Interview;
@@ -19,6 +17,7 @@ import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
+import com.smlikelion.webfounder.security.Auth;
 import com.smlikelion.webfounder.security.AuthInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -415,6 +414,45 @@ public class ManageService {
         candidateRepository.save(candidate);
 
         return "면접 시간이 성공적으로 설정되었습니다.";
+    }
+
+    public ApplicationStatusResponse getApplicationStatus(AuthInfo authInfo, String track) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
+        //트랙별 지원자수 조회
+        Long countByTrackALL = joinerRepository.countByTrack(Track.ALL);
+        Long countByTrackPM = joinerRepository.countByTrack(Track.PLANDESIGN);
+        Long countByTrackFE = joinerRepository.countByTrack(Track.FRONTEND);
+        Long countByTrackBE = joinerRepository.countByTrack(Track.BACKEND);
+
+        ApplicationStatusByTrack applicationStatusByTrack = new ApplicationStatusByTrack(
+                countByTrackALL, countByTrackPM, countByTrackFE, countByTrackBE
+        );
+
+        Track requestedTrack = validateTrackName(track);
+        List<Joiner> joinerList = joinerRepository.findAllByTrackOrderByCreatedAtAsc(requestedTrack);
+
+        List<ApplicationDocumentPreview> applicationDocumentPreviewList = joinerList.stream()
+                .map(this::mapJoinerToApplicationDocumentPreview)
+                .collect(Collectors.toList());
+
+        return ApplicationStatusResponse.builder()
+                .applicationStatusByTrack(applicationStatusByTrack)
+                .applicationDocumentPreviewList(applicationDocumentPreviewList)
+                .build();
+    }
+
+    private ApplicationDocumentPreview mapJoinerToApplicationDocumentPreview(Joiner joiner) {
+        return ApplicationDocumentPreview.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .submissionTime(joiner.getCreatedAt().toString())
+                .build();
     }
 
 }
