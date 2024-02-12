@@ -2,6 +2,8 @@ package com.smlikelion.webfounder.manage.service;
 
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
+import com.smlikelion.webfounder.admin.entity.Role;
+import com.smlikelion.webfounder.admin.exception.UnauthorizedRoleException;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
@@ -16,6 +18,7 @@ import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
+import com.smlikelion.webfounder.security.AuthInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,11 @@ public class ManageService {
     private final CandidateRepository candidateRepository;
     private final JoinerRepository joinerRepository;
 
-    public DocsQuestResponse registerQuestion(DocsQuestRequest request) {
+    public DocsQuestResponse registerQuestion(AuthInfo authInfo, DocsQuestRequest request) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         validateCurrentYear(request.getYear());
         Track track = validateTrackName(request.getTrack());
         validateQuestionNumber(request, track, null);
@@ -53,7 +60,11 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
-    public DocsQuestResponse updateQuestion(Long id, DocsQuestRequest request) {
+    public DocsQuestResponse updateQuestion(AuthInfo authInfo, Long id, DocsQuestRequest request) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
 
@@ -73,7 +84,11 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
-    public DocsQuestResponse deleteQuestion(Long id) {
+    public DocsQuestResponse deleteQuestion(AuthInfo authInfo, Long id) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
 
@@ -84,7 +99,11 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
-    public List<DocsQuestResponse> retrieveQuestionByYearAndTrack(Long year, String track) {
+    public List<DocsQuestResponse> retrieveQuestionByYearAndTrack(AuthInfo authInfo, Long year, String track) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         Track requestedTrack = validateTrackName(track);
 
         List<Question> questionList = questionRepository.findAllByYearAndTrack(year, requestedTrack);
@@ -105,6 +124,11 @@ public class ManageService {
                 .maxLength(question.getMaxLength())
                 .build();
     }
+
+    private boolean hasValidRoles(AuthInfo authInfo, List<Role> allowedRoles) {
+        return authInfo.getRoles().stream().anyMatch(allowedRoles::contains);
+    }
+
 
     private void validateCurrentYear(Long requestedYear) {
         if (Year.now().getValue() != requestedYear) {
