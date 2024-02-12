@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import com.smlikelion.webfounder.security.exception.EmptyTokenException;
+import com.smlikelion.webfounder.security.exception.ExpiredTokenException;
 import com.smlikelion.webfounder.security.exception.InvalidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,12 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
                     HttpStatus.BAD_REQUEST,
                     ErrorCode.INVALID_TOKEN_ERROR,
                     request, response, exception, "TOKEN-ERROR-01"
+            );
+        } catch (ExpiredTokenException exception) {
+            setErrorResponse(
+                    HttpStatus.UNAUTHORIZED,
+                    ErrorCode.EXPIRED_TOKEN_ERROR,
+                    request, response, exception, "TOKEN-ERROR-03"
             );
         } catch (EmptyTokenException exception) {
             setErrorResponse(

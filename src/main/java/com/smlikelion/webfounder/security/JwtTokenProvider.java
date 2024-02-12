@@ -1,6 +1,7 @@
 package com.smlikelion.webfounder.security;
 
 import com.smlikelion.webfounder.admin.entity.Role;
+import com.smlikelion.webfounder.security.exception.ExpiredTokenException;
 import com.smlikelion.webfounder.security.exception.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -33,7 +34,7 @@ public class JwtTokenProvider {
     @Value("${secret.jwt}")
     private String baseSecretKey;
 
-    //jwt 토큰 생성
+    //토큰 생성
     public TokenInfo createAccessToken(String accountId, Role role) {
         return createToken(accountId, role, ACCESS_TOKEN_VALID_TIME);
     }
@@ -44,7 +45,7 @@ public class JwtTokenProvider {
 
     //토큰 유효성 검사
     public Boolean validateToken(String token) {
-        log.info("validateToken method is invoked!" + token);
+        log.info("validateToken method is invoked! token : " + token);
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(baseSecretKey));
         try {
             Jwts.parserBuilder()
@@ -56,13 +57,13 @@ public class JwtTokenProvider {
         } catch (MalformedJwtException e) {
             throw new InvalidTokenException("MalformedJwtException - Jwt 토큰의 형식이 잘못되었습니다.");
         } catch (ExpiredJwtException e) {
-            throw new InvalidTokenException("ExpiredJwtException - 만료된 Jwt 토큰입니다.");
+            throw new ExpiredTokenException("ExpiredJwtException - 만료된 Jwt 토큰입니다.");
         } catch (UnsupportedJwtException e) {
             throw new InvalidTokenException("UnsupportedJwtException - 지원하지 않는 Jwt 토큰입니다.");
         } catch (IllegalArgumentException e) {
             throw new InvalidTokenException("IllegalArgumentException - 잘못된 헤더가 사용되었습니다.");
         } catch (io.jsonwebtoken.security.SignatureException e) {
-            throw new InvalidTokenException("SignatureException - Jwt 토큰의 서명이 잘못되었습니다.");
+            throw new InvalidTokenException("SignatureException - Jwt 토큰의 서명이 잘못되었된습니다.");
         }
     }
 
