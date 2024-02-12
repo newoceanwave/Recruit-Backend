@@ -262,6 +262,52 @@ public class ManageService {
     public List<DocsPassResponseDto> docsPassList(String track){
         Track requestedTrack = validateTrackName(track);
 
+        List<DocsPassResponseDto> result = new ArrayList<>();
+        List<Object[]> joinerAndCandidateList = candidateRepository.findAllJoinerAndCandidateByDocsAndInterview(Docs.PASS, Interview.PASS);
+
+        if(track.equals("all")){
+            for (Object[] objects : joinerAndCandidateList) {
+                Joiner joiner = (Joiner) objects[0];
+                Candidate candidate = (Candidate) objects[1];
+                result.add(mapJoinerAndCandidateToResponse(joiner, candidate));
+            }
+        }else {
+            for (Object[] objects : joinerAndCandidateList) {
+                Joiner joiner = (Joiner) objects[0];
+                Candidate candidate = (Candidate) objects[1];
+
+                // 요청된 트랙과 joiner의 트랙이 일치하는 경우에만 결과를 추가
+                if (joiner.getTrack().equals(requestedTrack)) {
+                    DocsPassResponseDto dto = mapJoinerAndCandidateToResponse(joiner, candidate);
+                    result.add(dto);
+                }
+            }
+        }
+        return result;
+
+
+    }
+
+    private void validateJoinerList(List<Joiner> joinerList){
+        if(joinerList.isEmpty()){
+            throw new NotFoundJoinerException("해당 트랙에 합격한 지원자가 존재하지 않습니다.");
+        }
+    }
+
+    private InterviewPassResponseDto mapJoinerToResponse(Joiner joiner){
+        return InterviewPassResponseDto.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .submissionTime(joiner.getCreatedAt().toString())
+                .build();
+    }
+
+    public List<InterviewPassResponseDto> interviewPassList(String track){
+        Track requestedTrack = validateTrackName(track);
+
         // Candidate 테이블에서 Docs 값이 PASS인 candidateList 추출
         List<Joiner> joinerList = joinerRepository.findAllById(
                 candidateRepository.findAllByDocs(Docs.PASS).stream()
@@ -282,55 +328,10 @@ public class ManageService {
                     .map(this::mapJoinerToResponse)
                     .collect(Collectors.toList());
         }
-
     }
 
-    private void validateJoinerList(List<Joiner> joinerList){
-        if(joinerList.isEmpty()){
-            throw new NotFoundJoinerException("해당 트랙에 합격한 지원자가 존재하지 않습니다.");
-        }
-    }
-
-    private DocsPassResponseDto mapJoinerToResponse(Joiner joiner){
+    private DocsPassResponseDto mapJoinerAndCandidateToResponse(Joiner joiner, Candidate candidate){
         return DocsPassResponseDto.builder()
-                .joinerId(joiner.getId())
-                .name(joiner.getName())
-                .phoneNum(joiner.getPhoneNum())
-                .studentID(joiner.getStudentId())
-                .track(joiner.getTrack().getTrackName())
-                .submissionTime(joiner.getCreatedAt().toString())
-                .build();
-    }
-
-    public List<InterviewPassResponseDto> interviewPassList(String track){
-        Track requestedTrack = validateTrackName(track);
-
-        List<InterviewPassResponseDto> result = new ArrayList<>();
-        List<Object[]> joinerAndCandidateList = candidateRepository.findAllJoinerAndCandidateByDocsAndInterview(Docs.PASS, Interview.PASS);
-
-        if(track.equals("all")){
-            for (Object[] objects : joinerAndCandidateList) {
-                Joiner joiner = (Joiner) objects[0];
-                Candidate candidate = (Candidate) objects[1];
-                result.add(mapJoinerAndCandidateToResponse(joiner, candidate));
-            }
-        }else {
-            for (Object[] objects : joinerAndCandidateList) {
-                Joiner joiner = (Joiner) objects[0];
-                Candidate candidate = (Candidate) objects[1];
-
-                // 요청된 트랙과 joiner의 트랙이 일치하는 경우에만 결과를 추가
-                if (joiner.getTrack().equals(requestedTrack)) {
-                    InterviewPassResponseDto dto = mapJoinerAndCandidateToResponse(joiner, candidate);
-                    result.add(dto);
-                }
-            }
-        }
-        return result;
-    }
-
-    private InterviewPassResponseDto mapJoinerAndCandidateToResponse(Joiner joiner, Candidate candidate){
-        return InterviewPassResponseDto.builder()
                 .joinerId(joiner.getId())
                 .name(joiner.getName())
                 .phoneNum(joiner.getPhoneNum())

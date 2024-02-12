@@ -13,6 +13,5 @@ public class InterviewPassResponseDto {
     private String phoneNum;
     private String studentID;
     private String track;
-    private String interviewTime;
     private String submissionTime;
 }
