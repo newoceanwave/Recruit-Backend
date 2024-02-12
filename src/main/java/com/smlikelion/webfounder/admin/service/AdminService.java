@@ -71,7 +71,6 @@ public class AdminService {
         return mapAdminToUpdateRoleResponse(admin);
     }
     public SignUpResponse signUp(SignUpRequest request) {
-
         if(adminRepository.existsByAccountId(request.getAccountId())) {
             throw new AlreadyExistsAccountException("이미 존재하는 아이디입니다.");
         }

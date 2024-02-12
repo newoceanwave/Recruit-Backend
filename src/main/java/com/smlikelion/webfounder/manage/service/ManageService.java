@@ -17,7 +17,6 @@ import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
-import com.smlikelion.webfounder.security.Auth;
 import com.smlikelion.webfounder.security.AuthInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
