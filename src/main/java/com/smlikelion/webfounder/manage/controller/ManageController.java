@@ -12,6 +12,7 @@ import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
 import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
 import com.smlikelion.webfounder.manage.service.ManageService;
+import com.smlikelion.webfounder.manage.service.SQLExecutionService;
 import com.smlikelion.webfounder.security.Auth;
 import com.smlikelion.webfounder.security.AuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +35,7 @@ public class ManageController {
 
     private final ManageService manageService;
     private final JoinerRepository joinerRepository;
+    private final SQLExecutionService sqlExecutionService;
 
     @Operation(summary = "서류 질문 등록하기")
     @PostMapping("/docs/quest")
@@ -167,4 +169,9 @@ public class ManageController {
         return new BaseResponse<>(manageService.getApplicationStatus(authInfo, track, pageable));
     }
 
+    @Operation(summary = "지원서류 전부 삭제하기")
+    @DeleteMapping("/apply/docs")
+    public BaseResponse<String> deleteAllDocs(@Auth AuthInfo authInfo) {
+        return new BaseResponse<>(sqlExecutionService.deleteAllDocs(authInfo));
+    }
 }

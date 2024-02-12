@@ -76,4 +76,12 @@ public class ManageExceptionHandler {
         return new BaseResponse<>(ErrorCode.INVALID_INTERVIEW_PASS_ERROR);
     }
 
+    @ExceptionHandler(DeleteEntityException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse<?> handleDeleteEntityException(DeleteEntityException e, HttpServletRequest request) {
+        log.warn("MANAGE-010> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.DELETE_ENTITY_ERROR);
+    }
+
+
 }

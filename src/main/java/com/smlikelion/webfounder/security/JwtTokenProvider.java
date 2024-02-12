@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
     private final long ACCESS_TOKEN_VALID_TIME = 1000L * 60 * 60 * 24 * 7; // 7일
     private final long REFRESH_TOKEN_VALID_TIME = 1000L * 60 * 60 * 24 * 30; // 30일
+
     private final String BEARER_TYPE = "Bearer ";
 
     @Value("${secret.jwt}")
