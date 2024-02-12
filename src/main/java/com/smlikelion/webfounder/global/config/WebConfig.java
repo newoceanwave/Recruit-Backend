@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000")  // 허용할 클라이언트 도메인
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("*") // "GET", "POST", "PUT", "DELETE" 외에도 "OPTIONS", "HEAD" 등이 있음
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization", "Content-Type")
                 .allowCredentials(true)

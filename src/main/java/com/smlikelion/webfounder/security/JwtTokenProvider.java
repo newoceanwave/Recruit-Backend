@@ -44,7 +44,7 @@ public class JwtTokenProvider {
 
     //토큰 유효성 검사
     public Boolean validateToken(String token) {
-        log.info("validateToken method is invoked!");
+        log.info("validateToken method is invoked!" + token);
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(baseSecretKey));
         try {
             Jwts.parserBuilder()
