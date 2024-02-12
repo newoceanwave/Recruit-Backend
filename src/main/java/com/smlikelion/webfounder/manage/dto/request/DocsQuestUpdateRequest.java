@@ -7,9 +7,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-
 @Getter
-public class DocsQuestRequest {
+public class DocsQuestUpdateRequest {
+    @NotNull(message = "Id를 입력 해야 합니다.")
+    private Long id;
 
     @NotNull(message = "활동 기수 입력을 해야 합니다.")
     @Min(value = 2023, message = "2023년 보다 작습니다.")

@@ -7,6 +7,7 @@ import com.smlikelion.webfounder.admin.exception.UnauthorizedRoleException;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.DocsQuestUpdateRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
@@ -84,6 +85,35 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
+    public List<DocsQuestResponse> updateQuestions(AuthInfo authInfo, List<DocsQuestUpdateRequest> requests) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
+        List<DocsQuestResponse> docsQuestResponseList = new ArrayList<>();
+
+        for(DocsQuestUpdateRequest request : requests){
+            Question question = questionRepository.findById(request.getId())
+                    .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
+
+            validateCurrentYear(request.getYear());
+            Track track = validateTrackName(request.getTrack());
+            validateCurrentTrack(question.getTrack(), track);
+            validateQuestionNumberByUpdate(request, track, question);
+
+            //문항 수정
+            question.setTrack(track);
+            question.setNumber(request.getNumber());
+            question.setContent(request.getContent());
+            question.setMaxLength(request.getMaxLength());
+
+            question = questionRepository.save(question);
+            docsQuestResponseList.add(mapQuestionToDocsQuestResponse(question));
+        }
+
+        return docsQuestResponseList;
+    }
+
     public DocsQuestResponse deleteQuestion(AuthInfo authInfo, Long id) {
         if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
             throw new UnauthorizedRoleException("접근 권한이 없습니다.");
@@ -150,7 +180,14 @@ public class ManageService {
 
     private void validateQuestionNumber(DocsQuestRequest request, Track track, Question existingQuestion) {
         Question foundQuestion = questionRepository.findByYearAndTrackAndNumber(request.getYear(), track, request.getNumber());
-        if (existingQuestion != foundQuestion) {
+        if (foundQuestion != null && existingQuestion != foundQuestion) {
+            throw new AlreadyExistsQuestionNumberException("이미 해당 년도 해당 트랙의 번호 문항이 존재합니다.");
+        }
+    }
+
+    private void validateQuestionNumberByUpdate(DocsQuestUpdateRequest request, Track track, Question existingQuestion) {
+        Question foundQuestion = questionRepository.findByYearAndTrackAndNumber(request.getYear(), track, request.getNumber());
+        if (foundQuestion != null && existingQuestion != foundQuestion) {
             throw new AlreadyExistsQuestionNumberException("이미 해당 년도 해당 트랙의 번호 문항이 존재합니다.");
         }
     }

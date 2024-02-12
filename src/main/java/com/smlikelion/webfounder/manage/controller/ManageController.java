@@ -5,6 +5,7 @@ import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.DocsQuestUpdateRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
 import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
 import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
@@ -67,6 +68,15 @@ public class ManageController {
             @PathVariable("id") Long id,
             @RequestBody @Valid DocsQuestRequest request) {
         return new BaseResponse<>(manageService.updateQuestion(authInfo, id, request));
+    }
+
+    @Operation(summary = "서류 질문 여러개 수정하기")
+    @PutMapping("/docs/quests")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<List<DocsQuestResponse>> updateQuestions(
+            @Auth AuthInfo authInfo,
+            @RequestBody @Valid List<DocsQuestUpdateRequest> requests) {
+        return new BaseResponse<>(manageService.updateQuestions(authInfo, requests));
     }
 
     @Operation(summary = "서류 합격자 선정")
