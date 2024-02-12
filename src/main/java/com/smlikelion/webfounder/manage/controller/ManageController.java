@@ -16,6 +16,8 @@ import com.smlikelion.webfounder.security.Auth;
 import com.smlikelion.webfounder.security.AuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
@@ -154,8 +156,15 @@ public class ManageController {
     @GetMapping("/apply")
     public BaseResponse<ApplicationStatusResponse> getApplicationStatus(
             @Auth AuthInfo authInfo,
-            @RequestParam("track") String track) {
-        return new BaseResponse<>(manageService.getApplicationStatus(authInfo, track));
+            @RequestParam("track") String track,
+            @RequestParam(value="page", required = false, defaultValue = "0") int page,
+            @RequestParam(value="size", required = false, defaultValue = "10") int size) {
+        if( page < 0 || size <= 0) {
+            page = 0;
+            size = 10;
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return new BaseResponse<>(manageService.getApplicationStatus(authInfo, track, pageable));
     }
 
 }

@@ -12,5 +12,6 @@ import java.util.List;
 public class ApplicationStatusResponse {
     private ApplicationStatusByTrack applicationStatusByTrack;
     private List<ApplicationDocumentPreview> applicationDocumentPreviewList;
-
+    private int currentPage;
+    private int totalPages;
 }

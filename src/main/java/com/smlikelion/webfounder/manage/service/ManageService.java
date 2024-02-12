@@ -21,9 +21,13 @@ import com.smlikelion.webfounder.security.Auth;
 import com.smlikelion.webfounder.security.AuthInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -416,42 +420,52 @@ public class ManageService {
         return "면접 시간이 성공적으로 설정되었습니다.";
     }
 
-    public ApplicationStatusResponse getApplicationStatus(AuthInfo authInfo, String track) {
+    public ApplicationStatusResponse getApplicationStatus(AuthInfo authInfo, String track, Pageable pageable) {
         if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
             throw new UnauthorizedRoleException("접근 권한이 없습니다.");
         }
 
         //트랙별 지원자수 조회
-        Long countByTrackALL = joinerRepository.countByTrack(Track.ALL);
         Long countByTrackPM = joinerRepository.countByTrack(Track.PLANDESIGN);
         Long countByTrackFE = joinerRepository.countByTrack(Track.FRONTEND);
         Long countByTrackBE = joinerRepository.countByTrack(Track.BACKEND);
+        Long countByTrackALL = countByTrackPM + countByTrackFE + countByTrackBE;
 
         ApplicationStatusByTrack applicationStatusByTrack = new ApplicationStatusByTrack(
                 countByTrackALL, countByTrackPM, countByTrackFE, countByTrackBE
         );
 
         Track requestedTrack = validateTrackName(track);
-        List<Joiner> joinerList = joinerRepository.findAllByTrackOrderByCreatedAtAsc(requestedTrack);
+        Page<Joiner> joinerPage = new PageImpl<>(List.of());
+        if(requestedTrack.equals(Track.ALL)){
+            joinerPage = joinerRepository.findAllByOrderByCreatedAt(pageable);
+        }
+        else{
+            joinerPage = joinerRepository.findAllByTrackOrderByCreatedAtAsc(requestedTrack, pageable);
+        }
 
-        List<ApplicationDocumentPreview> applicationDocumentPreviewList = joinerList.stream()
+        List<ApplicationDocumentPreview> applicationDocumentPreviewList = joinerPage.getContent().stream()
                 .map(this::mapJoinerToApplicationDocumentPreview)
                 .collect(Collectors.toList());
 
         return ApplicationStatusResponse.builder()
                 .applicationStatusByTrack(applicationStatusByTrack)
                 .applicationDocumentPreviewList(applicationDocumentPreviewList)
+                .currentPage(joinerPage.getNumber())
+                .totalPages(joinerPage.getTotalPages())
                 .build();
     }
 
     private ApplicationDocumentPreview mapJoinerToApplicationDocumentPreview(Joiner joiner) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         return ApplicationDocumentPreview.builder()
                 .joinerId(joiner.getId())
                 .name(joiner.getName())
                 .phoneNum(joiner.getPhoneNum())
                 .studentID(joiner.getStudentId())
                 .track(joiner.getTrack().getTrackName())
-                .submissionTime(joiner.getCreatedAt().toString())
+                .submissionTime(joiner.getCreatedAt().format(formatter))
                 .build();
     }
 
