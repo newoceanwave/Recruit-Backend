@@ -2,13 +2,14 @@ package com.smlikelion.webfounder.manage.service;
 
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Entity.Track;
+import com.smlikelion.webfounder.admin.entity.Role;
+import com.smlikelion.webfounder.admin.exception.UnauthorizedRoleException;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.manage.dto.request.DocsInterPassRequestDto;
 import com.smlikelion.webfounder.manage.dto.request.DocsQuestRequest;
+import com.smlikelion.webfounder.manage.dto.request.DocsQuestUpdateRequest;
 import com.smlikelion.webfounder.manage.dto.request.InterviewTimeRequest;
-import com.smlikelion.webfounder.manage.dto.response.DocsPassResponseDto;
-import com.smlikelion.webfounder.manage.dto.response.DocsQuestResponse;
-import com.smlikelion.webfounder.manage.dto.response.InterviewPassResponseDto;
+import com.smlikelion.webfounder.manage.dto.response.*;
 import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.smlikelion.webfounder.manage.entity.Docs;
 import com.smlikelion.webfounder.manage.entity.Interview;
@@ -16,11 +17,16 @@ import com.smlikelion.webfounder.manage.entity.Question;
 import com.smlikelion.webfounder.manage.exception.*;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
 import com.smlikelion.webfounder.manage.repository.QuestionRepository;
+import com.smlikelion.webfounder.security.AuthInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +41,11 @@ public class ManageService {
     private final CandidateRepository candidateRepository;
     private final JoinerRepository joinerRepository;
 
-    public DocsQuestResponse registerQuestion(DocsQuestRequest request) {
+    public DocsQuestResponse registerQuestion(AuthInfo authInfo, DocsQuestRequest request) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         validateCurrentYear(request.getYear());
         Track track = validateTrackName(request.getTrack());
         validateQuestionNumber(request, track, null);
@@ -53,7 +63,11 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
-    public DocsQuestResponse updateQuestion(Long id, DocsQuestRequest request) {
+    public DocsQuestResponse updateQuestion(AuthInfo authInfo, Long id, DocsQuestRequest request) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
 
@@ -73,7 +87,40 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
-    public DocsQuestResponse deleteQuestion(Long id) {
+    public List<DocsQuestResponse> updateQuestions(AuthInfo authInfo, List<DocsQuestUpdateRequest> requests) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
+        List<DocsQuestResponse> docsQuestResponseList = new ArrayList<>();
+
+        for(DocsQuestUpdateRequest request : requests){
+            Question question = questionRepository.findById(request.getId())
+                    .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
+
+            validateCurrentYear(request.getYear());
+            Track track = validateTrackName(request.getTrack());
+            validateCurrentTrack(question.getTrack(), track);
+            validateQuestionNumberByUpdate(request, track, question);
+
+            //문항 수정
+            question.setTrack(track);
+            question.setNumber(request.getNumber());
+            question.setContent(request.getContent());
+            question.setMaxLength(request.getMaxLength());
+
+            question = questionRepository.save(question);
+            docsQuestResponseList.add(mapQuestionToDocsQuestResponse(question));
+        }
+
+        return docsQuestResponseList;
+    }
+
+    public DocsQuestResponse deleteQuestion(AuthInfo authInfo, Long id) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundQuestionException("해당 id를 가진 문항이 존재하지 않습니다."));
 
@@ -84,7 +131,11 @@ public class ManageService {
         return mapQuestionToDocsQuestResponse(question);
     }
 
-    public List<DocsQuestResponse> retrieveQuestionByYearAndTrack(Long year, String track) {
+    public List<DocsQuestResponse> retrieveQuestionByYearAndTrack(AuthInfo authInfo, Long year, String track) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
         Track requestedTrack = validateTrackName(track);
 
         List<Question> questionList = questionRepository.findAllByYearAndTrack(year, requestedTrack);
@@ -106,6 +157,11 @@ public class ManageService {
                 .build();
     }
 
+    private boolean hasValidRoles(AuthInfo authInfo, List<Role> allowedRoles) {
+        return authInfo.getRoles().stream().anyMatch(allowedRoles::contains);
+    }
+
+
     private void validateCurrentYear(Long requestedYear) {
         if (Year.now().getValue() != requestedYear) {
             throw new MismatchedYearException("현재 년도와 다른 년도입니다.");
@@ -126,7 +182,14 @@ public class ManageService {
 
     private void validateQuestionNumber(DocsQuestRequest request, Track track, Question existingQuestion) {
         Question foundQuestion = questionRepository.findByYearAndTrackAndNumber(request.getYear(), track, request.getNumber());
-        if (existingQuestion != foundQuestion) {
+        if (foundQuestion != null && existingQuestion != foundQuestion) {
+            throw new AlreadyExistsQuestionNumberException("이미 해당 년도 해당 트랙의 번호 문항이 존재합니다.");
+        }
+    }
+
+    private void validateQuestionNumberByUpdate(DocsQuestUpdateRequest request, Track track, Question existingQuestion) {
+        Question foundQuestion = questionRepository.findByYearAndTrackAndNumber(request.getYear(), track, request.getNumber());
+        if (foundQuestion != null && existingQuestion != foundQuestion) {
             throw new AlreadyExistsQuestionNumberException("이미 해당 년도 해당 트랙의 번호 문항이 존재합니다.");
         }
     }
@@ -354,6 +417,55 @@ public class ManageService {
         candidateRepository.save(candidate);
 
         return "면접 시간이 성공적으로 설정되었습니다.";
+    }
+
+    public ApplicationStatusResponse getApplicationStatus(AuthInfo authInfo, String track, Pageable pageable) {
+        if(!hasValidRoles(authInfo, List.of(Role.SUPERUSER, Role.MANAGER))) {
+            throw new UnauthorizedRoleException("접근 권한이 없습니다.");
+        }
+
+        //트랙별 지원자수 조회
+        Long countByTrackPM = joinerRepository.countByTrack(Track.PLANDESIGN);
+        Long countByTrackFE = joinerRepository.countByTrack(Track.FRONTEND);
+        Long countByTrackBE = joinerRepository.countByTrack(Track.BACKEND);
+        Long countByTrackALL = countByTrackPM + countByTrackFE + countByTrackBE;
+
+        ApplicationStatusByTrack applicationStatusByTrack = new ApplicationStatusByTrack(
+                countByTrackALL, countByTrackPM, countByTrackFE, countByTrackBE
+        );
+
+        Track requestedTrack = validateTrackName(track);
+        Page<Joiner> joinerPage = new PageImpl<>(List.of());
+        if(requestedTrack.equals(Track.ALL)){
+            joinerPage = joinerRepository.findAllByOrderByCreatedAt(pageable);
+        }
+        else{
+            joinerPage = joinerRepository.findAllByTrackOrderByCreatedAtAsc(requestedTrack, pageable);
+        }
+
+        List<ApplicationDocumentPreview> applicationDocumentPreviewList = joinerPage.getContent().stream()
+                .map(this::mapJoinerToApplicationDocumentPreview)
+                .collect(Collectors.toList());
+
+        return ApplicationStatusResponse.builder()
+                .applicationStatusByTrack(applicationStatusByTrack)
+                .applicationDocumentPreviewList(applicationDocumentPreviewList)
+                .currentPage(joinerPage.getNumber())
+                .totalPages(joinerPage.getTotalPages())
+                .build();
+    }
+
+    private ApplicationDocumentPreview mapJoinerToApplicationDocumentPreview(Joiner joiner) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return ApplicationDocumentPreview.builder()
+                .joinerId(joiner.getId())
+                .name(joiner.getName())
+                .phoneNum(joiner.getPhoneNum())
+                .studentID(joiner.getStudentId())
+                .track(joiner.getTrack().getTrackName())
+                .submissionTime(joiner.getCreatedAt().format(formatter))
+                .build();
     }
 
 }

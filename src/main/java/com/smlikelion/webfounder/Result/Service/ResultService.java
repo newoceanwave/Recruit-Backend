@@ -56,6 +56,7 @@ public class ResultService {
             ResultInterviewResponse resultResponse = ResultInterviewResponse.builder()
                     .name(joiner.getName())
                     .interview(Interview.REJECT)
+                    .track(joiner.getTrack())
                     .build();
             return new BaseResponse<>(HttpStatus.OK.value(), "요청에 성공했습니다.", resultResponse);
         }
@@ -63,6 +64,7 @@ public class ResultService {
         ResultInterviewResponse resultResponse = ResultInterviewResponse.builder()
                 .name(joiner.getName())
                 .interview(candidate.getInterview())
+                .track(joiner.getTrack())
                 .build();
 
         return new BaseResponse<>(HttpStatus.OK.value(), "요청에 성공했습니다.", resultResponse);

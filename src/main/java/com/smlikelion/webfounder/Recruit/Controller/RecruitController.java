@@ -64,7 +64,7 @@ public class RecruitController {
                     .id(joiner.getId())
                     .studentInfo(joiner.toStudentInfoResponse())
                     .answerList(joiner.toAnswerListResponse())
-                    .interviewTime(joiner.getInterviewTime().keySet()) // 필요에 따라 수정
+                    .interviewTime(joiner.getInterviewTimeValues()) // 필요에 따라 수정
                     .build();
 
             return new BaseResponse<>(recruitResponse);
@@ -82,18 +82,5 @@ public class RecruitController {
             errors.forEach(error -> log.error("Validation error: {}", error.getDefaultMessage()));
         }
     }
-
-    @Operation(summary = "지원자 메일 제출")
-    @PostMapping("/mail")
-    private BaseResponse<String> mailSubmit(@RequestBody @Valid MailRequestDto requestDto){
-        return new BaseResponse<>(ErrorCode.CREATED,recruitService.mailSubmit(requestDto)+" 등록되었습니다.");
-    }
-
-    @Operation(summary = "지원자 메일 전체 조회")
-    @GetMapping("/mail")
-    private BaseResponse<List<String>> mailList(){
-        return new BaseResponse<>(recruitService.findAllmail());
-    }
-
 
 }

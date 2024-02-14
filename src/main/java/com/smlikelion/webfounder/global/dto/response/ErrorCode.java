@@ -23,10 +23,23 @@ public enum ErrorCode {
     //auth
     EMAIL_EXISTS_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이메일입니다."),
     INVALID_EMAIL_ERROR(false, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 이메일 정보입니다."),
-    INVALID_PASSWORD_ERROR(false, HttpStatus.BAD_REQUEST.value(), "비밀번호를 확인해주세요. 카카오 계정이라면 카카오 로그인으로 시도해주세요."),
     INVALID_ACCESS_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "AccessToken 정보를 찾을 수 없습니다."),
     INVALID_REFRESH_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "RefreshToken 정보를 찾을 수 없습니다."),
     USERNAME_EXISTS_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
+    UNAUTHORIZED_ERROR(false, HttpStatus.UNAUTHORIZED.value(), "로그인을 하지 않았습니다"),
+    FORBIDDEN_ERROR(false, HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
+    REFRESH_TOKEN_NOT_FOUND_ERROR(false, HttpStatus.BAD_REQUEST.value(), "RefreshToken 정보를 찾을 수 없습니다."),
+
+    //admin
+    ALREADY_EXISTS_ACCOUNT_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 아이디입니다."),
+    ALREADY_EXISTS_NAME_ERROR(false, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이름입니다."),
+    NOT_FOUND_ADMIN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "해당 관리자ID를 찾을 수 없습니다."),
+    UNSUPPORTED_ROLE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 역할입니다."),
+    INVALID_PASSWORD_ERROR(false, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
+    UNAUTHORIZED_ROLE_ERROR(false, HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
+    INVALID_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 토큰입니다."),
+    EMPTY_TOKEN_ERROR(false, HttpStatus.BAD_REQUEST.value(), "토큰이 비어있습니다."),
+    EXPIRED_TOKEN_ERROR(false, HttpStatus.UNAUTHORIZED.value(), "만료된 토큰입니다."),
 
     //manage
     UNSUPPORTED_TRACK_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원되지 않는 트랙입니다."),
@@ -35,6 +48,7 @@ public enum ErrorCode {
     NOT_FOUND_QUESTION_ERROR(false, HttpStatus.BAD_REQUEST.value(), "해당 문항을 찾을 수 없습니다."),
     MISMATCHED_TRACK_ERROR(false, HttpStatus.BAD_REQUEST.value(), "해당 트랙과 일치하지 않습니다."),
     INVALID_INTERVIEW_PASS_ERROR(false,HttpStatus.BAD_REQUEST.value(),"서류 불합격자가 포함되어 있습니다."),
+    DELETE_ENTITY_ERROR(false, HttpStatus.BAD_REQUEST.value(), "서류 전체 삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요"),
 
     //result
     MISSING_FIELD_ERROR(false, HttpStatus.BAD_REQUEST.value(), "입력란을 비워서 요청하는 경우입니다."),
