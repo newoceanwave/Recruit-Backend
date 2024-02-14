@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -139,8 +140,10 @@ public class ManageService {
         Track requestedTrack = validateTrackName(track);
 
         List<Question> questionList = questionRepository.findAllByYearAndTrack(year, requestedTrack);
-        validateQuestionList(questionList);
 
+        if (questionList == null) {
+            questionList = Collections.emptyList();
+        }
         return questionList.stream()
                 .map(this::mapQuestionToDocsQuestResponse)
                 .collect(Collectors.toList());
@@ -198,6 +201,7 @@ public class ManageService {
         if (questionList.isEmpty()) {
             throw new NotFoundQuestionException("해당 년도 해당 트랙의 문항이 존재하지 않습니다.");
         }
+
     }
 
     public List<Long> docsPass(DocsInterPassRequestDto requestDto){
