@@ -326,7 +326,7 @@ public class ManageService {
         Track requestedTrack = validateTrackName(track);
 
         List<DocsPassResponseDto> result = new ArrayList<>();
-        List<Object[]> joinerAndCandidateList = candidateRepository.findAllJoinerAndCandidateByDocsAndInterview(Docs.PASS, Interview.PASS);
+        List<Object[]> joinerAndCandidateList = candidateRepository.findAllJoinerAndCandidateByDocs(Docs.PASS);
 
         if(track.equals("all")){
             for (Object[] objects : joinerAndCandidateList) {
@@ -371,9 +371,9 @@ public class ManageService {
     public List<InterviewPassResponseDto> interviewPassList(String track){
         Track requestedTrack = validateTrackName(track);
 
-        // Candidate 테이블에서 Docs 값이 PASS인 candidateList 추출
+        // Candidate 테이블에서 Docs 값이 Pass이고 Interview 값이 PASS인 candidateList 추출
         List<Joiner> joinerList = joinerRepository.findAllById(
-                candidateRepository.findAllByDocs(Docs.PASS).stream()
+                candidateRepository.findAllByDocsAndInterview(Docs.PASS,Interview.PASS).stream()
                         .map(candidate -> candidate.getJoiner().getId())
                         .collect(Collectors.toSet())
         );

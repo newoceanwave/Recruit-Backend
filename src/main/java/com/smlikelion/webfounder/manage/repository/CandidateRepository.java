@@ -15,9 +15,10 @@ import java.util.Optional;
 public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     Optional<Candidate> findByJoiner(Joiner joiner);
     List<Candidate> findAllByDocs(Docs docs);
+    List<Candidate> findAllByInterview(Interview interview);
     List<Candidate> findAllByDocsAndInterview(Docs docs, Interview interview);
     Candidate findByJoinerAndDocs(Joiner joiner, Docs docs);
     Candidate findByJoinerAndInterview(Joiner joiner, Interview interview);
-    @Query("SELECT j, c FROM Joiner j JOIN Candidate c ON j = c.joiner WHERE c.docs = ?1 AND c.interview = ?2")
-    List<Object[]> findAllJoinerAndCandidateByDocsAndInterview(Docs docs, Interview interview);
+    @Query("SELECT j, c FROM Joiner j JOIN Candidate c ON j = c.joiner WHERE c.docs = ?1")
+    List<Object[]> findAllJoinerAndCandidateByDocs(Docs docs);
 }
