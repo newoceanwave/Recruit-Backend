@@ -26,7 +26,8 @@ public class RecruitService {
 
     private final JoinerRepository joinerRepository;
     private final CandidateRepository candidateRepository;
-    
+    private final MailService mailService;
+
     public RecruitmentResponse registerRecruitment(RecruitmentRequest request) {
 
         String studentId = request.getStudentInfo().getStudentId();
@@ -43,6 +44,9 @@ public class RecruitService {
         joiner.setAnswerList(answerList);
 
         joiner = joinerRepository.save(joiner);
+        if(joiner != null) {
+            mailService.sendApplyStatusMail(joiner.getEmail());
+        }
         StudentInfoResponse studentInfoResponse = joiner.toStudentInfoResponse();
 
         // cadidate entity 생성 시 서류합 란을 reject로 초기 설정
