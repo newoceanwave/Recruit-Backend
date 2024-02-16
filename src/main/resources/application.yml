@@ -37,8 +37,13 @@ spring:
       time-zone: Asia/Seoul
 
 logging:
+  file:
+    path: /home/ubuntu/
   level:
     org.hibernate.SQL: debug
+
+
+
     
 secret:
   jwt: aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789AbCdEfGhIjKlMnOpQrStUvWxYz
