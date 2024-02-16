@@ -27,10 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -351,8 +348,6 @@ public class ManageService {
             }
         }
         return result;
-
-
     }
 
     private void validateJoinerList(List<Joiner> joinerList){
@@ -384,8 +379,10 @@ public class ManageService {
                         .collect(Collectors.toSet())
         );
 
-        validateJoinerList(joinerList);
-
+        //validateJoinerList(joinerList);
+        if (joinerList == null) {
+           return Collections.emptyList();
+        }
         if(track.equals("all")){
             return joinerList.stream()
                     .map(this::mapJoinerToResponse)
