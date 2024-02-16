@@ -27,10 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -351,8 +348,6 @@ public class ManageService {
             }
         }
         return result;
-
-
     }
 
     private void validateJoinerList(List<Joiner> joinerList){
@@ -362,13 +357,15 @@ public class ManageService {
     }
 
     private InterviewPassResponseDto mapJoinerToResponse(Joiner joiner){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         return InterviewPassResponseDto.builder()
                 .joinerId(joiner.getId())
                 .name(joiner.getName())
                 .phoneNum(joiner.getPhoneNum())
                 .studentID(joiner.getStudentId())
                 .track(joiner.getTrack().getTrackName())
-                .submissionTime(joiner.getCreatedAt().toString())
+                .submissionTime(joiner.getCreatedAt().format(formatter))
                 .build();
     }
 
@@ -382,8 +379,10 @@ public class ManageService {
                         .collect(Collectors.toSet())
         );
 
-        validateJoinerList(joinerList);
-
+        //validateJoinerList(joinerList);
+        if (joinerList == null) {
+           return Collections.emptyList();
+        }
         if(track.equals("all")){
             return joinerList.stream()
                     .map(this::mapJoinerToResponse)
@@ -398,6 +397,8 @@ public class ManageService {
     }
 
     private DocsPassResponseDto mapJoinerAndCandidateToResponse(Joiner joiner, Candidate candidate){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         return DocsPassResponseDto.builder()
                 .joinerId(joiner.getId())
                 .name(joiner.getName())
@@ -405,7 +406,7 @@ public class ManageService {
                 .studentID(joiner.getStudentId())
                 .track(joiner.getTrack().getTrackName())
                 .interviewTime(candidate.getInterviewTime())
-                .submissionTime(joiner.getCreatedAt().toString())
+                .submissionTime(joiner.getCreatedAt().format(formatter))
                 .build();
     }
 

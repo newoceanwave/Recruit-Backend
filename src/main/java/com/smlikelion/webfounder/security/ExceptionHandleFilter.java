@@ -25,7 +25,7 @@ public class ExceptionHandleFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
-        log.info("ExceptionHandleFilter - doFilterInternal is invoked!");
+        //log.info("ExceptionHandleFilter - doFilterInternal is invoked!");
         try {
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException exception) {
