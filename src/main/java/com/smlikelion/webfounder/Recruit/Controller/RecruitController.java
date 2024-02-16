@@ -7,6 +7,7 @@ import com.smlikelion.webfounder.Recruit.Dto.Response.RecruitmentResponse;
 import com.smlikelion.webfounder.Recruit.Entity.Joiner;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.Recruit.Service.RecruitService;
+import com.smlikelion.webfounder.Recruit.exception.DuplicateStudentIdException;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,16 +43,20 @@ public class RecruitController {
         logValidationErrors(bindingResult);
 
         if ("fe".equalsIgnoreCase(track) || "pm".equalsIgnoreCase(track) || "be".equalsIgnoreCase(track)) {
-            // Process the valid request
-            RecruitmentResponse recruitResponse = recruitService.registerRecruitment(request);
-            return new BaseResponse<>(recruitResponse);
-
+            try {
+                // Process the valid request
+                RecruitmentResponse recruitResponse = recruitService.registerRecruitment(request);
+                return new BaseResponse<>(recruitResponse);
+            } catch (DuplicateStudentIdException e) {
+                return new BaseResponse<>(ErrorCode.NOT_FOUND.getCode(), ErrorCode.DUPLICATE_STUDENT_ID_ERROR.getMessage(), null);
+            }
         } else {
             // Handle invalid track value
             String errorMessage = "Invalid track value. Please provide a valid track (fe, pm, be).";
-            return new BaseResponse<>(ErrorCode.NOT_FOUND);
+            return new BaseResponse<>(ErrorCode.NOT_FOUND.getCode(), ErrorCode.NOT_FOUND.getMessage(), null);
         }
     }
+
     @Operation(summary = "트랙별 서류 작성 페이지 조회하기")
     @GetMapping("/docs/{joinerId}")
     public BaseResponse<RecruitmentResponse> getJoinerDetails(

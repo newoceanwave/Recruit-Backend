@@ -7,6 +7,7 @@ import com.smlikelion.webfounder.Recruit.Dto.Response.StudentInfoResponse;
 import com.smlikelion.webfounder.Recruit.Entity.*;
 import com.smlikelion.webfounder.Recruit.Repository.JoinerRepository;
 import com.smlikelion.webfounder.Recruit.Repository.MailRepository;
+import com.smlikelion.webfounder.Recruit.exception.DuplicateStudentIdException;
 import com.smlikelion.webfounder.Recruit.exception.NotFoundEmailException;
 import com.smlikelion.webfounder.manage.entity.Candidate;
 import com.smlikelion.webfounder.manage.repository.CandidateRepository;
@@ -25,9 +26,16 @@ public class RecruitService {
 
     private final JoinerRepository joinerRepository;
     private final CandidateRepository candidateRepository;
-
-
+    
     public RecruitmentResponse registerRecruitment(RecruitmentRequest request) {
+
+        String studentId = request.getStudentInfo().getStudentId();
+
+        // 동일한 학번을 가진 지원자가 이미 존재하는지 확인
+        if (joinerRepository.existsByStudentId(studentId)) {
+            throw new DuplicateStudentIdException("동일한 학번으로 중복된 지원서가 이미 제출되었습니다.");
+        }
+
         Joiner joiner = request.getStudentInfo().toJoiner();
         joiner.setInterviewTime(request.getInterview_time());
 
@@ -42,7 +50,6 @@ public class RecruitService {
         candidateRepository.save(candidate);
 
         Set<String> interviewTime = request.getInterview_time().values().stream().collect(Collectors.toSet());
-
 
         return RecruitmentResponse.builder()
                 .id(joiner.getId())
