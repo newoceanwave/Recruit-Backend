@@ -1,5 +1,6 @@
 package com.smlikelion.webfounder.global.exception;
 
+import com.smlikelion.webfounder.Recruit.exception.DuplicateStudentIdException;
 import com.smlikelion.webfounder.global.dto.response.BaseResponse;
 import com.smlikelion.webfounder.global.dto.response.ErrorCode;
 import com.smlikelion.webfounder.global.dto.response.GlobalExceptionResponse;
@@ -19,6 +20,14 @@ import java.util.List;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DuplicateStudentIdException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public BaseResponse<?> handleDuplicateStudentIdException(DuplicateStudentIdException ex, HttpServletRequest request) {
+        log.warn("GLOBAL-002> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + ex.getMessage());
+        return new BaseResponse<>(ErrorCode.DUPLICATE_STUDENT_ID_ERROR, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<?> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {

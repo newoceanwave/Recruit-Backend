@@ -25,7 +25,7 @@ public class StudentInfoRequest {
     private String email;
 
     @NotNull(message = "학번을 입력해주세요.")
-    private long studentId;
+    private String studentId;
 
     @NotBlank(message = "전공을 입력해주세요.")
     private String major;
