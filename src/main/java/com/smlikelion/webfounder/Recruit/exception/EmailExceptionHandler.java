@@ -20,4 +20,11 @@ public class EmailExceptionHandler {
         log.warn("Email-001> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
         return new BaseResponse<>(ErrorCode.NOT_FOUND);
     }
+
+    @ExceptionHandler(ApplyMailSendException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse<?> handleApplyMailSendException(ApplyMailSendException e, HttpServletRequest request) {
+        log.error("Email-002> 요청 URI: " + request.getRequestURI() + ", 에러메세지: " + e.getMessage());
+        return new BaseResponse<>(ErrorCode.APPLY_MAIL_SEND_ERROR);
+    }
 }

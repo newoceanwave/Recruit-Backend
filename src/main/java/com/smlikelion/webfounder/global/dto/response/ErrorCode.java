@@ -55,7 +55,8 @@ public enum ErrorCode {
     PASSWORD_INCORRECT_ERROR(false, HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
     MEMBER_NOT_FOUND_ERROR(false, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 회원 정보입니다."),
 
-
+    //mail
+    APPLY_MAIL_SEND_ERROR(false, HttpStatus.BAD_REQUEST.value(), "지원서 제출 메일 전송 중 문제가 발생했습니다. 이메일을 다시 확인해주세요."),
 
     DUPLICATE_STUDENT_ID_ERROR(false, HttpStatus.CONFLICT.value(), "동일한 학번으로 중복된 지원서가 이미 제출되었습니다.");
 
