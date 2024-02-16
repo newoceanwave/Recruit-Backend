@@ -32,6 +32,10 @@ spring:
           starttls:
             enable: true
 
+  spring:
+    jackson:
+      time-zone: Asia/Seoul
+
 logging:
   level:
     org.hibernate.SQL: debug
