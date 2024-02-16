@@ -362,13 +362,15 @@ public class ManageService {
     }
 
     private InterviewPassResponseDto mapJoinerToResponse(Joiner joiner){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         return InterviewPassResponseDto.builder()
                 .joinerId(joiner.getId())
                 .name(joiner.getName())
                 .phoneNum(joiner.getPhoneNum())
                 .studentID(joiner.getStudentId())
                 .track(joiner.getTrack().getTrackName())
-                .submissionTime(joiner.getCreatedAt().toString())
+                .submissionTime(joiner.getCreatedAt().format(formatter))
                 .build();
     }
 
@@ -398,6 +400,8 @@ public class ManageService {
     }
 
     private DocsPassResponseDto mapJoinerAndCandidateToResponse(Joiner joiner, Candidate candidate){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         return DocsPassResponseDto.builder()
                 .joinerId(joiner.getId())
                 .name(joiner.getName())
@@ -405,7 +409,7 @@ public class ManageService {
                 .studentID(joiner.getStudentId())
                 .track(joiner.getTrack().getTrackName())
                 .interviewTime(candidate.getInterviewTime())
-                .submissionTime(joiner.getCreatedAt().toString())
+                .submissionTime(joiner.getCreatedAt().format(formatter))
                 .build();
     }
 
