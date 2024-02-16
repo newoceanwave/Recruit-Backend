@@ -26,14 +26,12 @@ public class RecruitService {
 
     private final JoinerRepository joinerRepository;
     private final CandidateRepository candidateRepository;
-
-
+    
     public RecruitmentResponse registerRecruitment(RecruitmentRequest request) {
 
         String studentId = request.getStudentInfo().getStudentId();
 
         // 동일한 학번을 가진 지원자가 이미 존재하는지 확인
-        System.out.println("Student ID: " + studentId);
         if (joinerRepository.existsByStudentId(studentId)) {
             throw new DuplicateStudentIdException("동일한 학번으로 중복된 지원서가 이미 제출되었습니다.");
         }
@@ -52,9 +50,6 @@ public class RecruitService {
         candidateRepository.save(candidate);
 
         Set<String> interviewTime = request.getInterview_time().values().stream().collect(Collectors.toSet());
-
-
-
 
         return RecruitmentResponse.builder()
                 .id(joiner.getId())
