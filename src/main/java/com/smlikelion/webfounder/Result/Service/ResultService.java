@@ -42,6 +42,7 @@ public class ResultService {
         ResultDocsResponse resultResponse = ResultDocsResponse.builder()
                 .name(joiner.getName())
                 .docs(candidate.getDocs())
+                .interviewTime(candidate.getInterviewTime())
                 .build();
 
         return new BaseResponse<>(HttpStatus.OK.value(), "요청에 성공했습니다.", resultResponse);

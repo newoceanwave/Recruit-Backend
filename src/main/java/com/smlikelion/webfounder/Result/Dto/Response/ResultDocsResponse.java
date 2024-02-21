@@ -11,6 +11,7 @@ public class ResultDocsResponse {
 
     private String name;
     private Docs docs;
+    private String interviewTime;
 
     public static ResultResponseBuilder builder() {
         return new ResultResponseBuilder();
@@ -19,6 +20,7 @@ public class ResultDocsResponse {
     public static class ResultResponseBuilder {
         private String name;
         private Docs docs;
+        private String interviewTime;
 
         ResultResponseBuilder() {}
 
@@ -32,8 +34,13 @@ public class ResultDocsResponse {
             return this;
         }
 
+        public ResultResponseBuilder interviewTime(String interviewTime) {
+            this.interviewTime = interviewTime;
+            return this;
+        }
+
         public ResultDocsResponse build() {
-            return new ResultDocsResponse(name, docs);
+            return new ResultDocsResponse(name, docs, interviewTime);
         }
     }
 }
