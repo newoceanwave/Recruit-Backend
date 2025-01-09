@@ -10,11 +10,13 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/webfounder
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/webfounder
       SPRING_DATASOURCE_USERNAME: webfounder_user
       SPRING_DATASOURCE_PASSWORD: webfounder1234
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
+    networks:
+      - recruit-backend-network
 
   db:
     image: mysql:8.0
@@ -26,3 +28,9 @@ services:
       MYSQL_DATABASE: webfounder
       MYSQL_USER: webfounder_user
       MYSQL_PASSWORD: webfounder1234
+    networks:
+      - recruit-backend-network
+
+networks:
+  recruit-backend-network:
+    driver: bridge
